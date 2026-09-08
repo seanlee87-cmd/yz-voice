@@ -2262,3 +2262,220 @@ and
 #chat-send-button:active {
     transform: scale(0.96);
 }
+
+.profile-btn {
+    min-height: 38px;
+    padding: 0 14px;
+
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+
+    background: #1c1c2a;
+    color: #ffffff;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.profile-btn:hover {
+    background: #29293d;
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   USER LOGIN STATUS
+========================================================= */
+
+/* =========================================================
+   LOGIN USER NAV
+========================================================= */
+
+.guest-nav,
+.user-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* 强制隐藏 */
+.hidden {
+    display: none !important;
+}
+
+
+/* 已登录导航 */
+.user-nav {
+    height: 44px;
+}
+
+
+/* 用户头像 */
+.nav-user-avatar {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    object-fit: cover;
+    object-position: center;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(168, 85, 247, 0.9);
+
+    background: #202030;
+
+    box-shadow:
+        0 0 0 3px rgba(139, 92, 246, 0.10);
+
+    display: block;
+}
+
+
+/* 用户昵称 */
+.nav-user-nickname {
+    max-width: 110px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* 个人资料按钮 */
+.profile-btn {
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 0 15px;
+
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(139, 92, 246, 0.20),
+            rgba(236, 72, 153, 0.16)
+        );
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.profile-btn:hover {
+    transform: translateY(-1px);
+
+    border-color: rgba(168, 85, 247, 0.8);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(139, 92, 246, 0.36),
+            rgba(236, 72, 153, 0.28)
+        );
+
+    box-shadow:
+        0 8px 24px rgba(139, 92, 246, 0.20);
+}
+
+
+.profile-btn:active {
+    transform: translateY(0);
+}
+
+
+/* 未登录按钮区域 */
+.guest-nav {
+    align-items: center;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .nav-user-nickname {
+        display: none;
+    }
+
+    .nav-user-avatar {
+        width: 34px;
+        height: 34px;
+
+        flex-basis: 34px;
+    }
+
+    .profile-btn {
+        height: 34px;
+        padding: 0 11px;
+
+        font-size: 12px;
+    }
+
+}
+
+
+.nav-user-nickname {
+    max-width: 120px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+
+
+
+
+.profile-btn:hover {
+    background: #29293d;
+
+    transform: translateY(-1px);
+}
+
+
+@media (max-width: 768px) {
+
+    .nav-user-nickname {
+        display: none;
+    }
+
+    .profile-btn {
+        padding: 0 10px;
+    }
+
+}

@@ -637,6 +637,9 @@ async function updateHomepageUser() {
                 "hidden"
             );
 
+            guestNav.style.display =
+                "none";
+
         }
 
 
@@ -645,6 +648,9 @@ async function updateHomepageUser() {
             userNav.classList.remove(
                 "hidden"
             );
+
+            userNav.style.display =
+                "flex";
 
         }
 
@@ -784,6 +790,9 @@ function showGuestNav() {
             "hidden"
         );
 
+        guestNav.style.display =
+            "flex";
+
     }
 
 
@@ -793,6 +802,9 @@ function showGuestNav() {
             "hidden"
         );
 
+        userNav.style.display =
+            "none";
+            
     }
 
 }
