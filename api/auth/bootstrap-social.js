@@ -1,0 +1,1 @@
+const {json,requireAuth,body}=require("../_lib/http");const {createProfile}=require("../_lib/profile");module.exports=async(req,res)=>{if(req.method!=="POST")return json(res,405,{error:"METHOD_NOT_ALLOWED"});try{const u=await requireAuth(req);return json(res,200,{profile:await createProfile(u.uid,body(req))});}catch(e){return json(res,e.status||400,{error:e.message});}};
