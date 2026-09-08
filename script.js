@@ -154,25 +154,91 @@ function getCategoryText(
 
 
 // =========================================================
+// REAL ROOM DATA
+// =========================================================
+
+let realRooms = [];
+
+let currentRoomCategory = "all";
+
+
+// =========================================================
+// LOAD ROOMS FROM SERVER
+// =========================================================
+
+async function loadRooms() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/rooms/list",
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "ROOM_LIST_FAILED"
+            );
+
+        }
+
+
+        realRooms =
+            Array.isArray(data.rooms)
+                ? data.rooms
+                : [];
+
+
+        console.log(
+            "✅ 真实房间列表：",
+            realRooms
+        );
+
+
+        generateRooms(
+            currentRoomCategory
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "❌ 读取房间列表失败：",
+            error
+        );
+
+
+        realRooms = [];
+
+
+        generateRooms(
+            currentRoomCategory
+        );
+
+    }
+
+}
+
+
+// =========================================================
 // GET ROOM LIST
 // =========================================================
 
 function getRoomList() {
 
-    if (
-        typeof appData !==
-            "undefined" &&
-        Array.isArray(
-            appData.rooms
-        )
-    ) {
-
-        return appData.rooms;
-
-    }
-
-
-    return [];
+    return realRooms;
 
 }
 
@@ -462,6 +528,9 @@ function filterRooms(
     category,
     button
 ) {
+
+    currentRoomCategory =
+        category || "all";
 
     document
         .querySelectorAll(
@@ -920,9 +989,7 @@ document.addEventListener(
         prepareFilterButtons();
 
 
-        generateRooms(
-            "all"
-        );
+        loadRooms();
 
 
         bindCreateRoomButtons();
@@ -962,3 +1029,6 @@ window.goCreateRoom =
 
 window.updateHomepageUser =
     updateHomepageUser;
+
+window.loadRooms =
+    loadRooms;
