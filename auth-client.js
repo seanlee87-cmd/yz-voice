@@ -1,25 +1,39 @@
 // =========================================================
 // YZ VOICE
-// AUTH CLIENT
+// AUTH CLIENT - COMPLETE VERSION
 //
 // 功能：
-// 1. Firebase Authentication 初始化
-// 2. 保存登录状态
-// 3. Google 登录
-// 4. Custom Token 登录
-// 5. 等待 Firebase 恢复登录状态
-// 6. 获取当前用户
-// 7. requireUser 登录保护
-// 8. authFetch 自动携带 Firebase ID Token
-// 9. 退出登录
+// 1. Firebase App 初始化
+// 2. Firebase Authentication
+// 3. Firestore 初始化并 export db
+// 4. 保存登录状态
+// 5. Google 登录
+// 6. Custom Token 登录
+// 7. 等待登录状态恢复
+// 8. requireUser
+// 9. authFetch 自动携带 Firebase ID Token
+// 10. Logout
+// 11. 本机头像压缩
+//
+// 不使用 Firebase Storage
 // =========================================================
 
+
+
+// =========================================================
+// FIREBASE APP
+// =========================================================
 
 import {
     initializeApp,
     getApps
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
+
+
+// =========================================================
+// FIREBASE AUTH
+// =========================================================
 
 import {
     getAuth,
@@ -32,12 +46,21 @@ import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
+
+
+// =========================================================
+// FIRESTORE
+// =========================================================
+
 import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
+    getFirestore
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+
+// =========================================================
+// FIREBASE CONFIG
+// =========================================================
 
 import {
     firebaseConfig
@@ -46,7 +69,7 @@ import {
 
 
 // =========================================================
-// FIREBASE APP
+// FIREBASE APP INSTANCE
 // =========================================================
 
 const app =
@@ -59,7 +82,7 @@ const app =
 
 
 // =========================================================
-// FIREBASE AUTH
+// AUTH INSTANCE
 // =========================================================
 
 const auth =
@@ -68,15 +91,25 @@ const auth =
 
 
 // =========================================================
-// LOCAL LOGIN PERSISTENCE
+// FIRESTORE INSTANCE
 //
-// browserLocalPersistence:
+// room.js 会使用：
 //
-// 用户关闭浏览器后，登录状态仍然保存。
-// 除非：
-// - 用户主动退出登录
-// - 清除浏览器网站数据
-// - 浏览器限制本地存储
+// import {
+//     authFetch,
+//     requireUser,
+//     db
+// } from "./auth-client.js";
+//
+// =========================================================
+
+const db =
+    getFirestore(app);
+
+
+
+// =========================================================
+// LOGIN PERSISTENCE
 // =========================================================
 
 let persistenceReady =
@@ -104,16 +137,14 @@ const persistencePromise =
         .catch(
             function (error) {
 
+                persistenceReady =
+                    false;
+
+
                 console.error(
                     "❌ Firebase Persistence 设置失败：",
                     error
                 );
-
-
-                // 不让整个登录系统因为 persistence
-                // 设置失败而完全停止
-                persistenceReady =
-                    false;
 
             }
         );
@@ -121,11 +152,7 @@ const persistencePromise =
 
 
 // =========================================================
-// WAIT FOR AUTH INITIALIZATION
-//
-// Firebase 页面刚打开时需要一点时间读取本机保存的用户。
-// 不能直接只检查 auth.currentUser，
-// 否则可能误判成“未登录”。
+// AUTH INITIALIZATION STATE
 // =========================================================
 
 let authInitialized =
@@ -135,6 +162,11 @@ let authInitialized =
 let authInitializationPromise =
     null;
 
+
+
+// =========================================================
+// WAIT FOR FIREBASE AUTH
+// =========================================================
 
 function waitForAuthInitialization() {
 
@@ -164,6 +196,7 @@ function waitForAuthInitialization() {
 
                 const unsubscribe =
                     onAuthStateChanged(
+
                         auth,
 
                         function (user) {
@@ -201,6 +234,7 @@ function waitForAuthInitialization() {
                             );
 
                         }
+
                     );
 
             }
@@ -215,14 +249,6 @@ function waitForAuthInitialization() {
 
 // =========================================================
 // GET CURRENT USER
-//
-// 首页可以这样：
-//
-// const user = await getCurrentUser();
-//
-// if (user) {
-//     // 已登录
-// }
 // =========================================================
 
 export async function getCurrentUser() {
@@ -242,16 +268,11 @@ export async function getCurrentUser() {
 // =========================================================
 // REQUIRE USER
 //
-// 默认：
-// 如果没有登录，自动去 auth.html
+// requireUser()
+// 没登录 → auth.html
 //
-// 使用：
-//
-// const user = await requireUser();
-//
-// 如果只想检查，不想跳转：
-//
-// const user = await requireUser(false);
+// requireUser(false)
+// 没登录 → 返回 null
 // =========================================================
 
 export async function requireUser(
@@ -273,7 +294,6 @@ export async function requireUser(
                 .pop();
 
 
-        // 防止已经在登录页面时重复跳转
         if (
             currentPage !==
             "auth.html"
@@ -300,9 +320,6 @@ export async function requireUser(
 const googleProvider =
     new GoogleAuthProvider();
 
-
-// 每次点击 Google 登录时显示账号选择。
-// 对于多人共用电脑比较安全。
 
 googleProvider.setCustomParameters({
 
@@ -360,8 +377,6 @@ export async function loginGoogle() {
         );
 
 
-        // 给前端比较容易理解的错误
-
         if (
             error.code ===
             "auth/popup-closed-by-user"
@@ -408,11 +423,6 @@ export async function loginGoogle() {
 
 // =========================================================
 // CUSTOM TOKEN LOGIN
-//
-// Email 注册、ID+密码登录等后端成功后，
-// 后端返回 customToken：
-//
-// await loginCustomToken(data.customToken);
 // =========================================================
 
 export async function loginCustomToken(
@@ -483,8 +493,6 @@ export async function loginCustomToken(
 
 // =========================================================
 // GET ID TOKEN
-//
-// 给后端 API 验证身份。
 // =========================================================
 
 export async function getIdToken(
@@ -495,7 +503,9 @@ export async function getIdToken(
         await getCurrentUser();
 
 
-    if (!user) {
+    if (
+        !user
+    ) {
 
         return null;
 
@@ -513,25 +523,10 @@ export async function getIdToken(
 // =========================================================
 // AUTH FETCH
 //
-// 自动把 Firebase ID Token 放进：
+// 自动加入：
 //
-// Authorization: Bearer xxxxx
+// Authorization: Bearer FirebaseToken
 //
-// 使用：
-//
-// const response = await authFetch(
-//     "/api/profile"
-// );
-//
-// POST：
-//
-// const response = await authFetch(
-//     "/api/rooms/create",
-//     {
-//         method: "POST",
-//         body: JSON.stringify({...})
-//     }
-// );
 // =========================================================
 
 export async function authFetch(
@@ -543,7 +538,9 @@ export async function authFetch(
         await getCurrentUser();
 
 
-    if (!user) {
+    if (
+        !user
+    ) {
 
         throw new Error(
             "请先登录"
@@ -563,17 +560,13 @@ export async function authFetch(
         );
 
 
-    // Firebase ID Token
-
     headers.set(
         "Authorization",
         "Bearer " + token
     );
 
 
-    // 如果有 body，
-    // 而且调用方没有自己指定 Content-Type，
-    // 默认使用 JSON
+    // JSON BODY
 
     if (
         options.body !==
@@ -606,10 +599,7 @@ export async function authFetch(
 
 
     // =====================================================
-    // TOKEN EXPIRED RETRY
-    //
-    // 如果 Token 刚好过期，
-    // 强制刷新一次 Token 后重试。
+    // TOKEN EXPIRED
     // =====================================================
 
     if (
@@ -664,8 +654,6 @@ export async function authFetch(
 // LOGOUT
 // =========================================================
 
-
-
 export async function logout() {
 
     try {
@@ -678,6 +666,10 @@ export async function logout() {
         console.log(
             "✅ 用户已退出登录"
         );
+
+
+        window.location.href =
+            "index.html";
 
 
         return true;
@@ -702,14 +694,6 @@ export async function logout() {
 
 // =========================================================
 // AUTH STATE LISTENER
-//
-// 以后房间、首页、个人资料页面如果需要实时监听：
-//
-// const stop = listenAuthState(user => {
-//     console.log(user);
-// });
-//
-// stop(); 可以取消监听。
 // =========================================================
 
 export function listenAuthState(
@@ -747,56 +731,71 @@ export async function isLoggedIn() {
         await getCurrentUser();
 
 
-    return !!user;
+    return Boolean(
+        user
+    );
 
 }
 
 
 
 // =========================================================
-// EXPORT AUTH
-//
-// 一般页面不需要直接操作 auth，
-// 但保留给以后开发使用。
-// =========================================================
-
-export {
-    auth
-};
-
-
-
-// =========================================================
-// DEBUG
-// =========================================================
-
-console.log(
-    "✅ YZ Voice auth-client.js 已加载"
-);
-
-// =========================================================
 // UPLOAD AVATAR
-// Spark 免费方案版本
 //
-// 不使用 Firebase Storage。
-// 图片在浏览器压缩后，以 Data URL 保存到 Firestore。
+// Spark 免费版：
+//
+// 电脑选择图片
+// ↓
+// 浏览器裁剪
+// ↓
+// 256 × 256
+// ↓
+// WebP / JPEG
+// ↓
+// 返回 Data URL
+//
+// 不使用 Firebase Storage
 // =========================================================
 
-export async function uploadAvatar(file) {
+export async function uploadAvatar(
+    file
+) {
 
-    if (!file) {
-        throw new Error("请选择头像图片");
+    if (
+        !file
+    ) {
+
+        throw new Error(
+            "请选择头像图片"
+        );
+
     }
 
 
-    if (!file.type.startsWith("image/")) {
-        throw new Error("请选择 JPG、PNG 或 WebP 图片");
+    if (
+        !file.type.startsWith(
+            "image/"
+        )
+    ) {
+
+        throw new Error(
+            "请选择 JPG、PNG 或 WebP 图片"
+        );
+
     }
 
 
-    // 原始文件最大 5MB
-    if (file.size > 5 * 1024 * 1024) {
-        throw new Error("图片不能超过 5MB");
+    // 最大 5MB
+
+    if (
+        file.size >
+        5 * 1024 * 1024
+    ) {
+
+        throw new Error(
+            "图片不能超过 5MB"
+        );
+
     }
 
 
@@ -804,42 +803,59 @@ export async function uploadAvatar(file) {
         await getCurrentUser();
 
 
-    if (!user) {
-        throw new Error("请先登录");
+    if (
+        !user
+    ) {
+
+        throw new Error(
+            "请先登录"
+        );
+
     }
 
 
-    // =====================================================
-    // READ IMAGE
-    // =====================================================
-
     const imageUrl =
-        URL.createObjectURL(file);
+        URL.createObjectURL(
+            file
+        );
 
 
     try {
 
+        // =================================================
+        // LOAD IMAGE
+        // =================================================
+
         const image =
             await new Promise(
-                function(resolve, reject) {
+                function (
+                    resolve,
+                    reject
+                ) {
 
                     const img =
                         new Image();
 
 
                     img.onload =
-                        function() {
-                            resolve(img);
+                        function () {
+
+                            resolve(
+                                img
+                            );
+
                         };
 
 
                     img.onerror =
-                        function() {
+                        function () {
+
                             reject(
                                 new Error(
                                     "图片读取失败"
                                 )
                             );
+
                         };
 
 
@@ -850,8 +866,9 @@ export async function uploadAvatar(file) {
             );
 
 
+
         // =================================================
-        // AVATAR SIZE
+        // CANVAS
         // =================================================
 
         const size =
@@ -878,11 +895,16 @@ export async function uploadAvatar(file) {
             );
 
 
-        if (!ctx) {
+        if (
+            !ctx
+        ) {
+
             throw new Error(
                 "浏览器无法处理图片"
             );
+
         }
+
 
 
         // =================================================
@@ -919,6 +941,7 @@ export async function uploadAvatar(file) {
 
 
         ctx.drawImage(
+
             image,
 
             sourceX,
@@ -932,11 +955,13 @@ export async function uploadAvatar(file) {
 
             size,
             size
+
         );
 
 
+
         // =================================================
-        // COMPRESS TO WEBP
+        // WEBP
         // =================================================
 
         let dataUrl =
@@ -946,10 +971,14 @@ export async function uploadAvatar(file) {
             );
 
 
-        // 某些浏览器 WebP 支持异常时备用 JPEG
+        // =================================================
+        // FALLBACK JPEG
+        // =================================================
+
         if (
             !dataUrl ||
-            dataUrl.length < 100
+            dataUrl.length <
+                100
         ) {
 
             dataUrl =
@@ -961,10 +990,9 @@ export async function uploadAvatar(file) {
         }
 
 
+
         // =================================================
-        // SAFETY LIMIT
-        //
-        // Data URL 长度控制在约 300KB 内
+        // SECOND COMPRESSION
         // =================================================
 
         if (
@@ -981,6 +1009,11 @@ export async function uploadAvatar(file) {
         }
 
 
+
+        // =================================================
+        // FIRESTORE SAFETY LIMIT
+        // =================================================
+
         if (
             dataUrl.length >
             400000
@@ -994,10 +1027,12 @@ export async function uploadAvatar(file) {
 
 
         console.log(
-            "✅ 头像压缩完成",
+            "✅ 头像压缩完成：",
             Math.round(
-                dataUrl.length / 1024
-            ) + " KB"
+                dataUrl.length /
+                1024
+            ) +
+            " KB"
         );
 
 
@@ -1014,3 +1049,28 @@ export async function uploadAvatar(file) {
     }
 
 }
+
+
+
+// =========================================================
+// EXPORT FIREBASE OBJECTS
+// =========================================================
+
+export {
+    auth,
+    db
+};
+
+
+
+// =========================================================
+// DEBUG
+// =========================================================
+
+console.log(
+    "✅ YZ Voice auth-client.js 已加载"
+);
+
+console.log(
+    "✅ Firebase Firestore db 已初始化"
+);
