@@ -73,6 +73,7 @@
             <button
                 class="login-btn"
                 data-i18n="login"
+                onclick="window.location.href='auth.html'"
             >
                 登录
             </button>
@@ -81,6 +82,7 @@
             <button
                 class="register-btn"
                 data-i18n="register"
+                onclick="window.location.href='auth.html?mode=register'"
             >
                 注册
             </button>
@@ -146,7 +148,10 @@
                 </button>
 
 
-                <button class="secondary-btn">
+                <button class="secondary-btn"
+                        onclick="window.location.href='create-room.html'"
+                >
+
 
                     +
 
@@ -353,7 +358,9 @@
          CREATE ROOM
     ========================= -->
 
-    <button class="floating-create">
+    <button class="floating-create"
+            onclick="window.location.href='create-room.html'"
+    >
         +
     </button>
 
