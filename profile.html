@@ -1,1 +1,295 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>个人资料</title><link rel="stylesheet" href="style.css"></head><body><main class="profile-page"><section class="profile-card"><img id="avatar" class="profile-avatar"><input id="avatar-file" type="file" accept="image/*" hidden><button id="change-avatar">更换头像</button><h1 id="nickname">-</h1><div class="profile-fields"><div><span>ID</span><strong id="public-id">-</strong></div><div><span>生日</span><strong id="birthday">-</strong></div><div><span>性别</span><strong id="gender">-</strong></div></div><div class="wallet-grid"><div class="wallet-box"><span>金币</span><strong id="coins">0</strong></div><div class="wallet-box"><span>钻石</span><strong id="diamonds">0</strong></div></div><input id="new-nickname" placeholder="修改昵称"><button id="save-nickname">保存昵称</button><input id="withdraw-amount" type="number" placeholder="提现钻石"><button id="withdraw">提交提现申请</button><button id="logout">退出登录</button><p id="status"></p></section></main><script type="module" src="profile.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>个人资料 - YZ VOICE</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+
+<body class="profile-body">
+
+
+    <!-- =========================================
+         顶部工具栏
+    ========================================== -->
+
+    <header class="page-toolbar">
+
+        <a
+            href="index.html"
+            class="back-home-btn"
+            id="profile-back-home"
+        >
+            ← 返回首页
+        </a>
+
+
+        <select
+            id="language-switcher"
+            class="language-switcher"
+        >
+            <option value="zh-CN">
+                简体中文
+            </option>
+
+            <option value="zh-TW">
+                繁體中文
+            </option>
+        </select>
+
+    </header>
+
+
+
+    <!-- =========================================
+         PROFILE
+    ========================================== -->
+
+    <main class="profile-page">
+
+        <section class="profile-card">
+
+
+            <!-- 头像 -->
+
+            <div class="profile-avatar-section">
+
+                <img
+                    id="avatar"
+                    class="profile-avatar"
+                    src=""
+                    alt="用户头像"
+                >
+
+
+                <input
+                    id="avatar-file"
+                    type="file"
+                    accept="image/*"
+                    hidden
+                >
+
+
+                <button
+                    id="change-avatar"
+                    class="secondary-action"
+                    type="button"
+                >
+                    更换头像
+                </button>
+
+            </div>
+
+
+
+            <!-- 用户基本资料 -->
+
+            <div class="profile-header">
+
+                <h1 id="nickname">
+                    -
+                </h1>
+
+            </div>
+
+
+
+            <div class="profile-fields">
+
+                <div class="profile-field">
+
+                    <span>
+                        ID
+                    </span>
+
+                    <strong id="public-id">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="profile-field">
+
+                    <span id="birthday-label">
+                        生日
+                    </span>
+
+                    <strong id="birthday">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="profile-field">
+
+                    <span id="gender-label">
+                        性别
+                    </span>
+
+                    <strong id="gender">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =====================================
+                 钱包
+            ====================================== -->
+
+            <div class="wallet-grid">
+
+
+                <div class="wallet-box">
+
+                    <span id="coins-label">
+                        金币
+                    </span>
+
+                    <strong id="coins">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="wallet-box">
+
+                    <span id="diamonds-label">
+                        钻石
+                    </span>
+
+                    <strong id="diamonds">
+                        0
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =====================================
+                 修改昵称
+            ====================================== -->
+
+            <section class="profile-edit-section">
+
+                <h2 id="edit-profile-title">
+                    编辑资料
+                </h2>
+
+
+                <input
+                    id="new-nickname"
+                    class="profile-input"
+                    maxlength="20"
+                    placeholder="修改昵称"
+                >
+
+
+                <button
+                    id="save-nickname"
+                    class="primary-action"
+                    type="button"
+                >
+                    保存昵称
+                </button>
+
+            </section>
+
+
+
+            <!-- =====================================
+                 提现
+            ====================================== -->
+
+            <section class="profile-edit-section">
+
+                <h2 id="withdraw-title">
+                    钻石提现
+                </h2>
+
+
+                <input
+                    id="withdraw-amount"
+                    class="profile-input"
+                    type="number"
+                    min="1"
+                    placeholder="提现钻石数量"
+                >
+
+
+                <button
+                    id="withdraw"
+                    class="primary-action"
+                    type="button"
+                >
+                    提交提现申请
+                </button>
+
+            </section>
+
+
+
+            <!-- =====================================
+                 LOGOUT
+            ====================================== -->
+
+            <button
+                id="logout"
+                class="logout-action"
+                type="button"
+            >
+                退出登录
+            </button>
+
+
+
+            <!-- 状态 -->
+
+            <p
+                id="status"
+                class="profile-status"
+            ></p>
+
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================================
+         JS
+    ========================================== -->
+
+    <script src="lang.js"></script>
+
+    <script
+        type="module"
+        src="profile.js"
+    ></script>
+
+
+</body>
+
+</html>
