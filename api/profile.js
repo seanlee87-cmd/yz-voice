@@ -1,22 +1,75 @@
-const { getAdmin } = require("./_lib/firebaseAdmin");
+const {
+    getAdmin
+} = require("./_lib/firebaseAdmin");
+
 
 const {
     json,
     requireAuth,
-    getBody,
     normalizeNickname,
     validateNickname
 } = require("./_lib/http");
 
+
+
+// =========================================================
+// READ REQUEST BODY
+// =========================================================
+
+function readBody(req) {
+
+    if (!req.body) {
+        return {};
+    }
+
+
+    // Vercel 已经解析成 object
+    if (
+        typeof req.body === "object"
+    ) {
+        return req.body;
+    }
+
+
+    // 如果还是 JSON 字符串
+    if (
+        typeof req.body === "string"
+    ) {
+
+        try {
+
+            return JSON.parse(
+                req.body
+            );
+
+        } catch {
+
+            throw new Error(
+                "INVALID_JSON"
+            );
+
+        }
+
+    }
+
+
+    return {};
+}
+
+
+
+// =========================================================
+// PROFILE API
+// =========================================================
 
 module.exports =
 async function handler(req, res) {
 
     try {
 
-        // =============================================
-        // 先确认用户登录
-        // =============================================
+        // =================================================
+        // LOGIN
+        // =================================================
 
         const decoded =
             await requireAuth(req);
@@ -43,12 +96,13 @@ async function handler(req, res) {
 
 
 
-        // =============================================
-        // GET
-        // 读取自己的个人资料
-        // =============================================
+        // =================================================
+        // GET PROFILE
+        // =================================================
 
-        if (req.method === "GET") {
+        if (
+            req.method === "GET"
+        ) {
 
             const [
                 publicSnap,
@@ -63,7 +117,9 @@ async function handler(req, res) {
             ]);
 
 
-            if (!publicSnap.exists) {
+            if (
+                !publicSnap.exists
+            ) {
 
                 return json(
                     res,
@@ -83,10 +139,8 @@ async function handler(req, res) {
 
             const privateData =
                 privateSnap.exists
-                    ?
-                    privateSnap.data()
-                    :
-                    {};
+                    ? privateSnap.data()
+                    : {};
 
 
             return json(
@@ -119,15 +173,22 @@ async function handler(req, res) {
 
 
 
-        // =============================================
-        // POST
-        // 修改昵称 / 头像
-        // =============================================
+        // =================================================
+        // POST PROFILE UPDATE
+        // =================================================
 
-        if (req.method === "POST") {
+        if (
+            req.method === "POST"
+        ) {
 
             const body =
-                getBody(req);
+                readBody(req);
+
+
+            console.log(
+                "PROFILE UPDATE FIELDS:",
+                Object.keys(body)
+            );
 
 
             await db.runTransaction(
@@ -139,15 +200,19 @@ async function handler(req, res) {
                         );
 
 
-                    if (!snap.exists) {
+                    if (
+                        !snap.exists
+                    ) {
 
                         const error =
                             new Error(
                                 "PROFILE_NOT_FOUND"
                             );
 
+
                         error.status =
                             404;
+
 
                         throw error;
 
@@ -163,9 +228,9 @@ async function handler(req, res) {
 
 
 
-                    // =================================
-                    // 修改昵称
-                    // =================================
+                    // =====================================
+                    // NICKNAME
+                    // =====================================
 
                     if (
                         body.nickname !==
@@ -207,7 +272,8 @@ async function handler(req, res) {
                             const oldKey =
                                 encodeURIComponent(
                                     normalizeNickname(
-                                        oldProfile.nickname
+                                        oldProfile.nickname ||
+                                        ""
                                     )
                                 );
 
@@ -244,19 +310,17 @@ async function handler(req, res) {
                             tx.set(
                                 newNicknameRef,
                                 {
-
                                     uid:
                                         decoded.uid,
 
                                     nickname
-
                                 }
                             );
 
 
                             if (
-                                newKey !==
-                                oldKey
+                                oldKey &&
+                                newKey !== oldKey
                             ) {
 
                                 tx.delete(
@@ -283,37 +347,88 @@ async function handler(req, res) {
 
 
 
-                    // =================================
-                    // 修改头像
-                    // =================================
+                    // =====================================
+                    // AVATAR
+                    // =====================================
 
                     if (
                         body.avatarUrl !==
                         undefined
                     ) {
 
-                        updates.avatarUrl =
+                        const avatarUrl =
                             String(
                                 body.avatarUrl ||
                                 ""
                             );
 
+
+                        // 允许清除头像
+                        if (
+                            avatarUrl === ""
+                        ) {
+
+                            updates.avatarUrl =
+                                "";
+
+                        }
+
+                        else {
+
+                            // 目前不使用 Firebase Storage，
+                            // 所以允许压缩后的 Data URL
+
+                            const validImage =
+                                avatarUrl.startsWith(
+                                    "data:image/webp;base64,"
+                                ) ||
+                                avatarUrl.startsWith(
+                                    "data:image/jpeg;base64,"
+                                ) ||
+                                avatarUrl.startsWith(
+                                    "data:image/png;base64,"
+                                ) ||
+                                avatarUrl.startsWith(
+                                    "https://"
+                                );
+
+
+                            if (
+                                !validImage
+                            ) {
+
+                                throw new Error(
+                                    "INVALID_AVATAR"
+                                );
+
+                            }
+
+
+                            // 防止 Firestore 文档被超大图片撑爆
+                            if (
+                                avatarUrl.length >
+                                400000
+                            ) {
+
+                                throw new Error(
+                                    "AVATAR_TOO_LARGE"
+                                );
+
+                            }
+
+
+                            updates.avatarUrl =
+                                avatarUrl;
+
+                        }
+
                     }
 
 
 
-                    // =================================
-                    // 不允许修改这些
-                    // =================================
-                    //
-                    // gender
-                    // birthMonth
-                    // birthDay
-                    // birthYear
-                    //
-                    // 所以这里完全不处理
-                    // =================================
-
+                    // =====================================
+                    // SAVE
+                    // =====================================
 
                     if (
                         Object.keys(
@@ -345,6 +460,10 @@ async function handler(req, res) {
 
 
 
+        // =================================================
+        // METHOD
+        // =================================================
+
         return json(
             res,
             405,
@@ -369,11 +488,9 @@ async function handler(req, res) {
             error.status ||
             400,
             {
-
                 error:
                     error.message ||
                     "PROFILE_FAILED"
-
             }
         );
 
