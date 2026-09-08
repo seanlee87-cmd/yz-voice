@@ -1,10 +1,586 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>YZ Voice Room</title><link rel="stylesheet" href="style.css"></head><body class="room-page"><nav class="room-navbar"><button class="back-btn" onclick="goBack()">← 返回大厅</button><div class="room-nav-info"><h2 id="room-title">语音房</h2><span id="room-online">👥 0 人在线</span></div><button class="leave-btn" onclick="goBack()">离开房间</button></nav><main class="voice-room-layout" id="room-root"><section class="voice-stage"><div class="room-host-mini"><img id="host-avatar" class="host-avatar-img"><div class="host-text"><span>房主</span><strong id="room-host">-</strong></div></div><div class="seat-grid">
-<div class="voice-seat empty-seat" data-seat="1"><div class="seat-avatar" onclick="toggleSeat(1)">+</div><span id="seat-name-1">1号麦</span></div>
-<div class="voice-seat empty-seat" data-seat="2"><div class="seat-avatar" onclick="toggleSeat(2)">+</div><span id="seat-name-2">2号麦</span></div>
-<div class="voice-seat empty-seat" data-seat="3"><div class="seat-avatar" onclick="toggleSeat(3)">+</div><span id="seat-name-3">3号麦</span></div>
-<div class="voice-seat empty-seat" data-seat="4"><div class="seat-avatar" onclick="toggleSeat(4)">+</div><span id="seat-name-4">4号麦</span></div>
-<div class="voice-seat empty-seat" data-seat="5"><div class="seat-avatar" onclick="toggleSeat(5)">+</div><span id="seat-name-5">5号麦</span></div>
-<div class="voice-seat empty-seat" data-seat="6"><div class="seat-avatar" onclick="toggleSeat(6)">+</div><span id="seat-name-6">6号麦</span></div>
-<div class="voice-seat empty-seat" data-seat="7"><div class="seat-avatar" onclick="toggleSeat(7)">+</div><span id="seat-name-7">7号麦</span></div>
-<div class="voice-seat boss-seat empty-seat" data-seat="8"><div class="boss-sofa">♛</div><div class="seat-avatar" onclick="toggleSeat(8)">+</div><span id="seat-name-8">老板位</span></div>
-</div><div class="voice-controls"><button class="control-btn" id="mic-button" onclick="toggleMicrophone()"><span id="mic-icon">🎤</span><span id="mic-text">麦克风</span></button><label class="volume-control">🎙️<input id="mic-volume" type="range" min="0" max="200" value="100"><small id="mic-volume-value">100%</small></label><button class="control-btn" id="speaker-button"><span>🔊</span><span>扬声器</span></button><label class="volume-control">🔊<input id="speaker-volume" type="range" min="0" max="100" value="100"><small id="speaker-volume-value">100%</small></label><button class="control-btn" id="gift-button"><span>🎁</span><span>礼物</span></button></div></section><aside class="chat-panel"><div class="chat-header"><h3>💬 房间聊天</h3></div><div class="chat-messages" id="chat-messages"><div class="chat-message"><strong>系统</strong><p>欢迎进入语音房</p></div></div><div class="chat-input-area"><input id="chat-input" maxlength="200" placeholder="说点什么..."><button id="chat-send-button">发送</button></div></aside></main><div id="gift-modal" class="modal hidden"><div class="modal-card"><button class="modal-close" id="gift-close">×</button><h3>礼物</h3><p>请先点击一个已上麦的用户头像，再选择礼物。</p><div id="gift-grid" class="gift-grid"></div></div></div><div id="gift-animation-layer" class="gift-animation-layer"></div><script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script><script type="module" src="room.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover"
+    >
+
+    <title>YZ Voice Room</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body class="room-page">
+
+    <!-- =========================
+         TOP BAR
+    ========================= -->
+
+    <nav class="room-topbar">
+
+        <div class="room-top-left">
+
+            <button
+                class="room-back-btn"
+                type="button"
+                onclick="goBack()"
+            >
+                ← 返回大厅
+            </button>
+
+        </div>
+
+
+        <div class="room-top-center">
+
+            <h2 id="room-title">
+                语音房
+            </h2>
+
+            <div id="room-online">
+                👥 0 人在线
+            </div>
+
+        </div>
+
+
+        <div class="room-top-right">
+
+            <button
+                class="room-leave-btn"
+                type="button"
+                onclick="goBack()"
+            >
+                离开房间
+            </button>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- =========================
+         ROOM
+    ========================= -->
+
+    <main
+        class="room-layout"
+        id="room-root"
+    >
+
+
+        <!-- =====================
+             VOICE STAGE
+        ====================== -->
+
+        <section class="voice-stage">
+
+
+            <!-- HOST -->
+
+            <div class="room-host-box">
+
+                <img
+                    id="host-avatar"
+                    src=""
+                    alt="房主头像"
+                >
+
+
+                <div class="room-host-text">
+
+                    <small>
+                        房主
+                    </small>
+
+                    <strong id="room-host">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =====================
+                 SEATS
+            ====================== -->
+
+            <div class="seat-grid">
+
+
+                <div
+                    class="voice-seat empty-seat"
+                    data-seat="1"
+                >
+
+                    <div
+                        class="seat-avatar"
+                        onclick="toggleSeat(1)"
+                    >
+                        +
+                    </div>
+
+                    <span
+                        class="seat-name"
+                        id="seat-name-1"
+                    >
+                        1号麦
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="voice-seat empty-seat"
+                    data-seat="2"
+                >
+
+                    <div
+                        class="seat-avatar"
+                        onclick="toggleSeat(2)"
+                    >
+                        +
+                    </div>
+
+                    <span
+                        class="seat-name"
+                        id="seat-name-2"
+                    >
+                        2号麦
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="voice-seat empty-seat"
+                    data-seat="3"
+                >
+
+                    <div
+                        class="seat-avatar"
+                        onclick="toggleSeat(3)"
+                    >
+                        +
+                    </div>
+
+                    <span
+                        class="seat-name"
+                        id="seat-name-3"
+                    >
+                        3号麦
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="voice-seat empty-seat"
+                    data-seat="4"
+                >
+
+                    <div
+                        class="seat-avatar"
+                        onclick="toggleSeat(4)"
+                    >
+                        +
+                    </div>
+
+                    <span
+                        class="seat-name"
+                        id="seat-name-4"
+                    >
+                        4号麦
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="voice-seat empty-seat"
+                    data-seat="5"
+                >
+
+                    <div
+                        class="seat-avatar"
+                        onclick="toggleSeat(5)"
+                    >
+                        +
+                    </div>
+
+                    <span
+                        class="seat-name"
+                        id="seat-name-5"
+                    >
+                        5号麦
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="voice-seat empty-seat"
+                    data-seat="6"
+                >
+
+                    <div
+                        class="seat-avatar"
+                        onclick="toggleSeat(6)"
+                    >
+                        +
+                    </div>
+
+                    <span
+                        class="seat-name"
+                        id="seat-name-6"
+                    >
+                        6号麦
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="voice-seat empty-seat"
+                    data-seat="7"
+                >
+
+                    <div
+                        class="seat-avatar"
+                        onclick="toggleSeat(7)"
+                    >
+                        +
+                    </div>
+
+                    <span
+                        class="seat-name"
+                        id="seat-name-7"
+                    >
+                        7号麦
+                    </span>
+
+                </div>
+
+
+
+                <!-- BOSS SEAT -->
+
+                <div
+                    class="voice-seat empty-seat boss-seat"
+                    data-seat="8"
+                >
+
+                    <div
+                        class="seat-avatar"
+                        onclick="toggleSeat(8)"
+                    >
+                        +
+                    </div>
+
+                    <span
+                        class="seat-name"
+                        id="seat-name-8"
+                    >
+                        老板位
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =====================
+                 CONTROLS
+            ====================== -->
+
+            <div class="room-controls">
+
+
+                <!-- MICROPHONE -->
+
+                <button
+                    class="control-button"
+                    id="mic-button"
+                    type="button"
+                    onclick="toggleMicrophone()"
+                >
+
+                    <span
+                        class="control-icon"
+                        id="mic-icon"
+                    >
+                        🎤
+                    </span>
+
+                    <span
+                        class="control-label"
+                        id="mic-text"
+                    >
+                        麦克风
+                    </span>
+
+                </button>
+
+
+
+                <!-- SPEAKER -->
+
+                <button
+                    class="control-button"
+                    id="speaker-button"
+                    type="button"
+                >
+
+                    <span class="control-icon">
+                        🔊
+                    </span>
+
+                    <span class="control-label">
+                        扬声器
+                    </span>
+
+                </button>
+
+
+
+                <!-- GIFT -->
+
+                <button
+                    class="control-button"
+                    id="gift-button"
+                    type="button"
+                >
+
+                    <span class="control-icon">
+                        🎁
+                    </span>
+
+                    <span class="control-label">
+                        礼物
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =====================
+                 VOLUME
+            ====================== -->
+
+            <div class="volume-panel">
+
+                <div class="volume-row">
+
+                    <span>
+                        🎙️ 麦克风
+                    </span>
+
+                    <input
+                        id="mic-volume"
+                        type="range"
+                        min="0"
+                        max="200"
+                        value="100"
+                    >
+
+                    <small id="mic-volume-value">
+                        100%
+                    </small>
+
+                </div>
+
+
+                <div class="volume-row">
+
+                    <span>
+                        🔊 扬声器
+                    </span>
+
+                    <input
+                        id="speaker-volume"
+                        type="range"
+                        min="0"
+                        max="100"
+                        value="100"
+                    >
+
+                    <small id="speaker-volume-value">
+                        100%
+                    </small>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================
+             CHAT
+        ====================== -->
+
+        <aside class="chat-panel">
+
+
+            <div class="chat-header">
+
+                <h3>
+                    💬 房间聊天
+                </h3>
+
+            </div>
+
+
+
+            <div
+                class="chat-messages"
+                id="chat-messages"
+            >
+
+                <div class="chat-message">
+
+                    <strong>
+                        系统
+                    </strong>
+
+                    <p>
+                        欢迎进入语音房
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="chat-input-area">
+
+                <input
+                    id="chat-input"
+                    maxlength="200"
+                    autocomplete="off"
+                    placeholder="说点什么..."
+                >
+
+                <button
+                    id="chat-send-button"
+                    type="button"
+                >
+                    发送
+                </button>
+
+            </div>
+
+
+        </aside>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         GIFT MODAL
+    ========================= -->
+
+    <div
+        id="gift-modal"
+        class="gift-modal hidden"
+    >
+
+        <div class="gift-modal-content">
+
+
+            <div class="gift-modal-header">
+
+                <div>
+
+                    <h3>
+                        🎁 选择礼物
+                    </h3>
+
+                    <small>
+                        请选择已经上麦的用户
+                    </small>
+
+                </div>
+
+
+                <button
+                    id="gift-close"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div
+                id="gift-grid"
+                class="gift-grid"
+            >
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         GIFT ANIMATION
+    ========================= -->
+
+    <div
+        id="gift-animation-layer"
+        class="gift-animation-layer"
+    >
+    </div>
+
+
+
+    <!-- =========================
+         LIVEKIT
+    ========================= -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"
+    ></script>
+
+
+    <!-- =========================
+         ROOM JS
+    ========================= -->
+
+    <script
+        type="module"
+        src="room.js"
+    ></script>
+
+
+</body>
+
+</html>
