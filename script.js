@@ -568,55 +568,13 @@ async function updateHomepageUser() {
             );
 
 
-        // =================================================
-        // WAIT FOR FIREBASE AUTH STATE
-        // =================================================
+        // =========================================
+        // CHECK LOGIN
+        // =========================================
 
-        let user =
-            null;
+        const user =
+            await authModule.getCurrentUser();
 
-
-        if (
-            typeof authModule
-                .getCurrentUser ===
-            "function"
-        ) {
-
-            user =
-                await authModule
-                    .getCurrentUser();
-
-        }
-
-        else if (
-            typeof authModule
-                .requireUser ===
-            "function"
-        ) {
-
-            try {
-
-                user =
-                    await authModule
-                        .requireUser(
-                            false
-                        );
-
-            }
-
-            catch (error) {
-
-                user =
-                    null;
-
-            }
-
-        }
-
-
-        // =================================================
-        // NOT LOGGED IN
-        // =================================================
 
         if (!user) {
 
@@ -627,9 +585,9 @@ async function updateHomepageUser() {
         }
 
 
-        // =================================================
-        // LOGGED IN
-        // =================================================
+        // =========================================
+        // 已登录：隐藏登录/注册
+        // =========================================
 
         if (guestNav) {
 
@@ -655,20 +613,9 @@ async function updateHomepageUser() {
         }
 
 
-        // =================================================
-        // LOAD PROFILE
-        // =================================================
-
-        if (
-            typeof authModule
-                .authFetch !==
-            "function"
-        ) {
-
-            return;
-
-        }
-
+        // =========================================
+        // READ YZ VOICE PROFILE
+        // =========================================
 
         const response =
             await authModule.authFetch(
@@ -676,20 +623,10 @@ async function updateHomepageUser() {
             );
 
 
-        if (
-            response.status ===
-            404
-        ) {
-
-            return;
-
-        }
-
-
         if (!response.ok) {
 
             console.warn(
-                "读取首页用户资料失败：",
+                "首页读取用户资料失败：",
                 response.status
             );
 
@@ -698,57 +635,95 @@ async function updateHomepageUser() {
         }
 
 
-        const profile =
+        const data =
             await response.json();
 
 
-        // =================================================
-        // NICKNAME
-        // =================================================
+        // 你的 API 正常结构：
+        // {
+        //     profile: {...},
+        //     wallet: {...}
+        // }
 
-        if (
-            nicknameElement
-        ) {
+        const profile =
+            data.profile ||
+            data;
+
+
+        console.log(
+            "✅ 首页用户资料：",
+            profile
+        );
+
+
+        // =========================================
+        // NICKNAME
+        // 一定优先用 YZ VOICE 昵称
+        // =========================================
+
+        if (nicknameElement) {
 
             nicknameElement.textContent =
                 profile.nickname ||
-                user.displayName ||
                 "用户";
 
         }
 
 
-        // =================================================
+        // =========================================
         // AVATAR
-        // =================================================
+        // 一定优先用 YZ VOICE 个人头像
+        // =========================================
 
-        if (
-            avatarElement
-        ) {
+        if (avatarElement) {
 
-            const avatarUrl =
+            let avatarUrl =
                 profile.avatarUrl ||
-                user.photoURL ||
                 "";
 
 
-            if (avatarUrl) {
+            // 个人资料没头像才用 Google
+            if (!avatarUrl) {
 
-                avatarElement.src =
-                    avatarUrl;
+                avatarUrl =
+                    user.photoURL ||
+                    "";
+
+            }
+
+
+            // 都没有就用默认头像
+            if (!avatarUrl) {
+
+                const seed =
+                    profile.publicId ||
+                    profile.nickname ||
+                    user.uid;
+
+
+                avatarUrl =
+                    `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(seed)}`;
 
             }
 
-            else {
 
-                avatarElement.removeAttribute(
-                    "src"
-                );
+            avatarElement.src =
+                avatarUrl;
 
-                avatarElement.alt =
-                    "👤";
 
-            }
+            avatarElement.onerror =
+                function () {
+
+                    const seed =
+                        profile.publicId ||
+                        profile.nickname ||
+                        user.uid;
+
+
+                    avatarElement.src =
+                        `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(seed)}`;
+
+                };
 
         }
 
@@ -756,8 +731,8 @@ async function updateHomepageUser() {
 
     catch (error) {
 
-        console.log(
-            "首页登录状态检查：未登录或读取失败",
+        console.error(
+            "首页用户资料读取失败：",
             error
         );
 
@@ -804,7 +779,7 @@ function showGuestNav() {
 
         userNav.style.display =
             "none";
-            
+
     }
 
 }
