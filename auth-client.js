@@ -65,8 +65,7 @@ const app =
 const auth =
     getAuth(app);
 
-const storage =
-    getStorage(app);
+
 
 // =========================================================
 // LOCAL LOGIN PERSISTENCE
@@ -665,120 +664,7 @@ export async function authFetch(
 // LOGOUT
 // =========================================================
 
-// =========================================================
-// UPLOAD AVATAR
-// =========================================================
 
-export async function uploadAvatar(file) {
-
-    if (!file) {
-        throw new Error("请选择头像图片");
-    }
-
-
-    if (!file.type.startsWith("image/")) {
-        throw new Error("只允许上传图片文件");
-    }
-
-
-    // 最大 5MB
-    if (file.size > 5 * 1024 * 1024) {
-        throw new Error("头像图片不能超过 5MB");
-    }
-
-
-    const user =
-        await getCurrentUser();
-
-
-    if (!user) {
-        throw new Error("请先登录");
-    }
-
-
-    const extension =
-        file.name
-            ?.split(".")
-            .pop()
-            ?.toLowerCase() ||
-        "jpg";
-
-
-    const safeExtension =
-        /^[a-z0-9]+$/.test(extension)
-            ? extension
-            : "jpg";
-
-
-    const filePath =
-        `avatars/${user.uid}/${Date.now()}.${safeExtension}`;
-
-
-    const storageRef =
-        ref(
-            storage,
-            filePath
-        );
-
-
-    try {
-
-        console.log(
-            "正在上传头像：",
-            filePath
-        );
-
-
-        await uploadBytes(
-            storageRef,
-            file,
-            {
-                contentType:
-                    file.type
-            }
-        );
-
-
-        const downloadUrl =
-            await getDownloadURL(
-                storageRef
-            );
-
-
-        console.log(
-            "✅ 头像上传成功"
-        );
-
-
-        return downloadUrl;
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "❌ 头像上传失败：",
-            error
-        );
-
-
-        if (
-            error.code ===
-            "storage/unauthorized"
-        ) {
-
-            throw new Error(
-                "没有上传头像的权限，请检查 Firebase Storage Rules"
-            );
-
-        }
-
-
-        throw error;
-
-    }
-
-}
 
 export async function logout() {
 
@@ -887,3 +773,244 @@ export {
 console.log(
     "✅ YZ Voice auth-client.js 已加载"
 );
+
+// =========================================================
+// UPLOAD AVATAR
+// Spark 免费方案版本
+//
+// 不使用 Firebase Storage。
+// 图片在浏览器压缩后，以 Data URL 保存到 Firestore。
+// =========================================================
+
+export async function uploadAvatar(file) {
+
+    if (!file) {
+        throw new Error("请选择头像图片");
+    }
+
+
+    if (!file.type.startsWith("image/")) {
+        throw new Error("请选择 JPG、PNG 或 WebP 图片");
+    }
+
+
+    // 原始文件最大 5MB
+    if (file.size > 5 * 1024 * 1024) {
+        throw new Error("图片不能超过 5MB");
+    }
+
+
+    const user =
+        await getCurrentUser();
+
+
+    if (!user) {
+        throw new Error("请先登录");
+    }
+
+
+    // =====================================================
+    // READ IMAGE
+    // =====================================================
+
+    const imageUrl =
+        URL.createObjectURL(file);
+
+
+    try {
+
+        const image =
+            await new Promise(
+                function(resolve, reject) {
+
+                    const img =
+                        new Image();
+
+
+                    img.onload =
+                        function() {
+                            resolve(img);
+                        };
+
+
+                    img.onerror =
+                        function() {
+                            reject(
+                                new Error(
+                                    "图片读取失败"
+                                )
+                            );
+                        };
+
+
+                    img.src =
+                        imageUrl;
+
+                }
+            );
+
+
+        // =================================================
+        // AVATAR SIZE
+        // =================================================
+
+        const size =
+            256;
+
+
+        const canvas =
+            document.createElement(
+                "canvas"
+            );
+
+
+        canvas.width =
+            size;
+
+
+        canvas.height =
+            size;
+
+
+        const ctx =
+            canvas.getContext(
+                "2d"
+            );
+
+
+        if (!ctx) {
+            throw new Error(
+                "浏览器无法处理图片"
+            );
+        }
+
+
+        // =================================================
+        // CENTER CROP
+        // =================================================
+
+        const sourceSize =
+            Math.min(
+                image.width,
+                image.height
+            );
+
+
+        const sourceX =
+            (
+                image.width -
+                sourceSize
+            ) / 2;
+
+
+        const sourceY =
+            (
+                image.height -
+                sourceSize
+            ) / 2;
+
+
+        ctx.clearRect(
+            0,
+            0,
+            size,
+            size
+        );
+
+
+        ctx.drawImage(
+            image,
+
+            sourceX,
+            sourceY,
+
+            sourceSize,
+            sourceSize,
+
+            0,
+            0,
+
+            size,
+            size
+        );
+
+
+        // =================================================
+        // COMPRESS TO WEBP
+        // =================================================
+
+        let dataUrl =
+            canvas.toDataURL(
+                "image/webp",
+                0.78
+            );
+
+
+        // 某些浏览器 WebP 支持异常时备用 JPEG
+        if (
+            !dataUrl ||
+            dataUrl.length < 100
+        ) {
+
+            dataUrl =
+                canvas.toDataURL(
+                    "image/jpeg",
+                    0.80
+                );
+
+        }
+
+
+        // =================================================
+        // SAFETY LIMIT
+        //
+        // Data URL 长度控制在约 300KB 内
+        // =================================================
+
+        if (
+            dataUrl.length >
+            300000
+        ) {
+
+            dataUrl =
+                canvas.toDataURL(
+                    "image/jpeg",
+                    0.65
+                );
+
+        }
+
+
+        if (
+            dataUrl.length >
+            400000
+        ) {
+
+            throw new Error(
+                "头像压缩后仍然过大，请选择另一张图片"
+            );
+
+        }
+
+
+        console.log(
+            "✅ 头像压缩完成",
+            Math.round(
+                dataUrl.length / 1024
+            ) + " KB"
+        );
+
+
+        return dataUrl;
+
+    }
+
+    finally {
+
+        URL.revokeObjectURL(
+            imageUrl
+        );
+
+    }
+
+}
