@@ -32,6 +32,12 @@ import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
+import {
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 import {
     firebaseConfig
@@ -59,7 +65,8 @@ const app =
 const auth =
     getAuth(app);
 
-
+const storage =
+    getStorage(app);
 
 // =========================================================
 // LOCAL LOGIN PERSISTENCE
@@ -657,6 +664,121 @@ export async function authFetch(
 // =========================================================
 // LOGOUT
 // =========================================================
+
+// =========================================================
+// UPLOAD AVATAR
+// =========================================================
+
+export async function uploadAvatar(file) {
+
+    if (!file) {
+        throw new Error("请选择头像图片");
+    }
+
+
+    if (!file.type.startsWith("image/")) {
+        throw new Error("只允许上传图片文件");
+    }
+
+
+    // 最大 5MB
+    if (file.size > 5 * 1024 * 1024) {
+        throw new Error("头像图片不能超过 5MB");
+    }
+
+
+    const user =
+        await getCurrentUser();
+
+
+    if (!user) {
+        throw new Error("请先登录");
+    }
+
+
+    const extension =
+        file.name
+            ?.split(".")
+            .pop()
+            ?.toLowerCase() ||
+        "jpg";
+
+
+    const safeExtension =
+        /^[a-z0-9]+$/.test(extension)
+            ? extension
+            : "jpg";
+
+
+    const filePath =
+        `avatars/${user.uid}/${Date.now()}.${safeExtension}`;
+
+
+    const storageRef =
+        ref(
+            storage,
+            filePath
+        );
+
+
+    try {
+
+        console.log(
+            "正在上传头像：",
+            filePath
+        );
+
+
+        await uploadBytes(
+            storageRef,
+            file,
+            {
+                contentType:
+                    file.type
+            }
+        );
+
+
+        const downloadUrl =
+            await getDownloadURL(
+                storageRef
+            );
+
+
+        console.log(
+            "✅ 头像上传成功"
+        );
+
+
+        return downloadUrl;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "❌ 头像上传失败：",
+            error
+        );
+
+
+        if (
+            error.code ===
+            "storage/unauthorized"
+        ) {
+
+            throw new Error(
+                "没有上传头像的权限，请检查 Firebase Storage Rules"
+            );
+
+        }
+
+
+        throw error;
+
+    }
+
+}
 
 export async function logout() {
 
