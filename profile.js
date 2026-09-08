@@ -397,7 +397,7 @@ if ($("save-nickname")) {
 
                 const response =
                     await authFetch(
-                        "/api/profile/update",
+                        "/api/profile",
                         {
                             method: "POST",
                             body: JSON.stringify({
