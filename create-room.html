@@ -1,1 +1,200 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>创建房间</title><link rel="stylesheet" href="style.css"></head><body class="auth-page"><main class="auth-shell"><section class="auth-card"><h1>创建语音房</h1><input id="room-title" maxlength="30" placeholder="房间名称"><select id="room-category"><option value="chat">聊天</option><option value="sing">K歌</option><option value="game">游戏</option><option value="social">交友</option></select><input id="room-password" type="password" placeholder="房间密码（可留空）"><button id="create" class="primary-action">创建</button><p id="status"></p></section></main><script type="module" src="create-room.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        YZ Voice - 创建房间
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body class="create-room-page">
+
+
+    <!-- =====================================================
+         TOP BAR
+    ====================================================== -->
+
+    <div class="auth-topbar">
+
+        <button
+            type="button"
+            class="auth-back-btn"
+            onclick="window.location.href='index.html'"
+        >
+            ←
+            <span data-i18n="backHome">
+                返回首页
+            </span>
+        </button>
+
+
+        <select
+            id="language-selector"
+            class="language-selector"
+            onchange="setLanguage(this.value)"
+        >
+
+            <option value="zh-CN">
+                简体中文
+            </option>
+
+            <option value="zh-TW">
+                繁體中文
+            </option>
+
+        </select>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CREATE ROOM
+    ====================================================== -->
+
+    <main class="create-room-page">
+
+        <section class="create-room-card">
+
+
+            <!-- =================================================
+                 TITLE
+            ================================================== -->
+
+            <h1 data-i18n="createVoiceRoom">
+                创建语音房
+            </h1>
+
+
+
+            <!-- =================================================
+                 FORM
+            ================================================== -->
+
+            <div class="create-room-form">
+
+
+                <!-- ROOM NAME -->
+
+                <input
+                    id="room-title"
+                    type="text"
+                    maxlength="30"
+                    autocomplete="off"
+                    placeholder="房间名称"
+                    data-i18n-placeholder="roomNamePlaceholder"
+                >
+
+
+
+                <!-- CATEGORY -->
+
+                <select id="room-category">
+
+                    <option
+                        value="chat"
+                        data-i18n="chat"
+                    >
+                        聊天
+                    </option>
+
+                    <option
+                        value="sing"
+                        data-i18n="singing"
+                    >
+                        K歌
+                    </option>
+
+                    <option
+                        value="game"
+                        data-i18n="game"
+                    >
+                        游戏
+                    </option>
+
+                    <option
+                        value="social"
+                        data-i18n="social"
+                    >
+                        交友
+                    </option>
+
+                </select>
+
+
+
+                <!-- PASSWORD -->
+
+                <input
+                    id="room-password"
+                    type="password"
+                    maxlength="30"
+                    autocomplete="new-password"
+                    placeholder="房间密码（可留空）"
+                    data-i18n-placeholder="roomPasswordPlaceholder"
+                >
+
+
+
+                <!-- CREATE -->
+
+                <button
+                    id="create"
+                    type="button"
+                    class="primary-action"
+                    data-i18n="create"
+                >
+                    创建
+                </button>
+
+
+
+                <!-- STATUS -->
+
+                <p
+                    id="status"
+                    aria-live="polite"
+                ></p>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+
+         lang.js 必须先加载，
+         create-room.js 再作为 module 加载
+    ====================================================== -->
+
+    <script src="lang.js"></script>
+
+    <script
+        type="module"
+        src="create-room.js"
+    ></script>
+
+
+</body>
+
+</html>
