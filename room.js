@@ -6,8 +6,7 @@
 import {
     authFetch,
     requireUser,
-    db,
-    uploadRoomBackground
+    db
 } from "./auth-client.js";
 
 
@@ -2707,6 +2706,11 @@ function showGiftAnimation(
 // =========================================================
 
 function renderManageTools() {
+
+
+    // 暂时关闭房间背景/管理工具
+    // Firebase Storage 未启用
+    return;
 
     if (
         !roomInfo ||
