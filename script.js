@@ -172,7 +172,7 @@ async function loadRooms() {
 
         const response =
             await fetch(
-                "/api/rooms/list",
+                "/api/rooms?action=list",
                 {
                     method: "GET",
                     cache: "no-store"

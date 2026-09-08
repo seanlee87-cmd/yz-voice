@@ -192,7 +192,7 @@ async function joinRoom() {
 
     let response =
         await authFetch(
-            "/api/rooms/join",
+            "/api/rooms?action=join",
             {
 
                 method:
@@ -228,7 +228,7 @@ async function joinRoom() {
 
         response =
             await authFetch(
-                "/api/rooms/join",
+                "/api/rooms?action=join",
                 {
 
                     method:
@@ -2846,7 +2846,7 @@ function renderManageTools() {
 
                 const response =
                     await authFetch(
-                        "/api/rooms/manage",
+                        "/api/rooms?action=manage",
                         {
 
                             method:
@@ -2997,7 +2997,7 @@ function renderManageTools() {
 
                 const response =
                     await authFetch(
-                        "/api/rooms/manage",
+                        "/api/rooms?action=manage",
                         {
 
                             method:

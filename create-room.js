@@ -91,7 +91,7 @@ async function createRoom() {
 
         const response =
             await authFetch(
-                "/api/rooms/create",
+                "/api/rooms?action=create",
                 {
 
                     method:
