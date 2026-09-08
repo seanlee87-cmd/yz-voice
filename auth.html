@@ -1,1 +1,358 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>YZ Voice 注册/登录</title><link rel="stylesheet" href="style.css"></head><body class="auth-page"><main class="auth-shell"><section class="auth-card"><h1>YZ VOICE</h1><div class="auth-tabs"><button id="tab-login" class="active">登录</button><button id="tab-register">注册</button></div><section id="login-panel"><button id="google-login" class="social-login">G Google 一键登录</button><a href="/api/auth/wechat-start" class="social-login wechat-login">💬 微信一键登录</a><div class="splitter">或</div><input id="login-id" placeholder="8位用户ID"><input id="login-password" type="password" placeholder="密码"><label class="terms-check"><input id="login-terms" type="checkbox"> 我同意 <a href="terms.html" target="_blank">用户条款</a></label><button id="id-login" class="primary-action">登录</button></section><section id="register-panel" hidden><input id="reg-email" type="email" placeholder="Email"><input id="reg-password" type="password" placeholder="密码（至少8位，含字母+数字）"><input id="reg-nickname" maxlength="20" placeholder="唯一昵称"><select id="reg-gender"><option value="">选择性别（以后不能改）</option><option value="male">男</option><option value="female">女</option><option value="other">其他</option></select><div class="birthday-grid"><input id="reg-month" type="number" min="1" max="12" placeholder="月"><input id="reg-day" type="number" min="1" max="31" placeholder="日"><input id="reg-year" type="number" min="1900" placeholder="年份（不公开）"></div><label class="terms-check"><input id="reg-terms" type="checkbox"> 我同意 <a href="terms.html" target="_blank">用户条款</a></label><button id="email-register" class="primary-action">Email 注册</button><button id="google-register" class="social-login">G 使用 Google 注册</button><a href="/api/auth/wechat-start" class="social-login wechat-login">💬 使用微信注册</a></section><p id="auth-status"></p></section></main><script type="module" src="auth.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1"
+    >
+
+    <title>YZ Voice 注册/登录</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+
+<body class="auth-page">
+
+
+    <!-- =========================
+         TOP BAR
+    ========================= -->
+
+    <div class="auth-topbar">
+
+        <button
+            class="auth-back-btn"
+            onclick="window.location.href='index.html'"
+        >
+            ←
+            <span data-i18n="backHome">
+                返回首页
+            </span>
+        </button>
+
+
+        <select
+            id="language-selector"
+            class="language-selector"
+            onchange="setLanguage(this.value)"
+        >
+            <option value="zh-CN">
+                简体中文
+            </option>
+
+            <option value="zh-TW">
+                繁體中文
+            </option>
+        </select>
+
+    </div>
+
+
+
+    <main class="auth-shell">
+
+        <section class="auth-card">
+
+            <h1>
+                YZ VOICE
+            </h1>
+
+
+
+            <!-- =========================
+                 LOGIN / REGISTER TABS
+            ========================= -->
+
+            <div class="auth-tabs">
+
+                <button
+                    id="tab-login"
+                    class="active"
+                    data-i18n="login"
+                >
+                    登录
+                </button>
+
+
+                <button
+                    id="tab-register"
+                    data-i18n="register"
+                >
+                    注册
+                </button>
+
+            </div>
+
+
+
+            <!-- =========================
+                 LOGIN PANEL
+            ========================= -->
+
+            <section id="login-panel">
+
+                <button
+                    id="google-login"
+                    class="social-login"
+                >
+                    G
+                    <span data-i18n="googleLogin">
+                        Google 一键登录
+                    </span>
+                </button>
+
+
+                <a
+                    href="/api/auth/wechat-start"
+                    class="social-login wechat-login"
+                >
+                    💬
+                    <span data-i18n="wechatLogin">
+                        微信一键登录
+                    </span>
+                </a>
+
+
+                <div
+                    class="splitter"
+                    data-i18n="or"
+                >
+                    或
+                </div>
+
+
+                <input
+                    id="login-id"
+                    placeholder="8位用户ID"
+                    data-i18n-placeholder="userIdPlaceholder"
+                >
+
+
+                <input
+                    id="login-password"
+                    type="password"
+                    placeholder="密码"
+                    data-i18n-placeholder="passwordPlaceholder"
+                >
+
+
+                <label class="terms-check">
+
+                    <input
+                        id="login-terms"
+                        type="checkbox"
+                    >
+
+                    <span data-i18n="agreeTerms">
+                        我同意
+                    </span>
+
+                    <a
+                        href="terms.html"
+                        target="_blank"
+                        data-i18n="userTerms"
+                    >
+                        用户条款
+                    </a>
+
+                </label>
+
+
+                <button
+                    id="id-login"
+                    class="primary-action"
+                    data-i18n="login"
+                >
+                    登录
+                </button>
+
+            </section>
+
+
+
+            <!-- =========================
+                 REGISTER PANEL
+            ========================= -->
+
+            <section
+                id="register-panel"
+                hidden
+            >
+
+                <input
+                    id="reg-email"
+                    type="email"
+                    placeholder="Email"
+                >
+
+
+                <input
+                    id="reg-password"
+                    type="password"
+                    placeholder="密码（至少8位，含字母+数字）"
+                    data-i18n-placeholder="registerPasswordPlaceholder"
+                >
+
+
+                <input
+                    id="reg-nickname"
+                    maxlength="20"
+                    placeholder="唯一昵称"
+                    data-i18n-placeholder="nicknamePlaceholder"
+                >
+
+
+                <select id="reg-gender">
+
+                    <option
+                        value=""
+                        data-i18n="selectGender"
+                    >
+                        选择性别（以后不能改）
+                    </option>
+
+                    <option
+                        value="male"
+                        data-i18n="male"
+                    >
+                        男
+                    </option>
+
+                    <option
+                        value="female"
+                        data-i18n="female"
+                    >
+                        女
+                    </option>
+
+                    <option
+                        value="other"
+                        data-i18n="other"
+                    >
+                        其他
+                    </option>
+
+                </select>
+
+
+
+                <div class="birthday-grid">
+
+                    <input
+                        id="reg-month"
+                        type="number"
+                        min="1"
+                        max="12"
+                        placeholder="月"
+                        data-i18n-placeholder="month"
+                    >
+
+
+                    <input
+                        id="reg-day"
+                        type="number"
+                        min="1"
+                        max="31"
+                        placeholder="日"
+                        data-i18n-placeholder="day"
+                    >
+
+
+                    <input
+                        id="reg-year"
+                        type="number"
+                        min="1900"
+                        placeholder="年份（不公开）"
+                        data-i18n-placeholder="yearPrivate"
+                    >
+
+                </div>
+
+
+
+                <label class="terms-check">
+
+                    <input
+                        id="reg-terms"
+                        type="checkbox"
+                    >
+
+                    <span data-i18n="agreeTerms">
+                        我同意
+                    </span>
+
+                    <a
+                        href="terms.html"
+                        target="_blank"
+                        data-i18n="userTerms"
+                    >
+                        用户条款
+                    </a>
+
+                </label>
+
+
+
+                <button
+                    id="email-register"
+                    class="primary-action"
+                    data-i18n="emailRegister"
+                >
+                    Email 注册
+                </button>
+
+
+                <button
+                    id="google-register"
+                    class="social-login"
+                >
+                    G
+                    <span data-i18n="googleRegister">
+                        使用 Google 注册
+                    </span>
+                </button>
+
+
+                <a
+                    href="/api/auth/wechat-start"
+                    class="social-login wechat-login"
+                >
+                    💬
+                    <span data-i18n="wechatRegister">
+                        使用微信注册
+                    </span>
+                </a>
+
+            </section>
+
+
+
+            <p id="auth-status"></p>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================
+         SCRIPTS
+    ========================= -->
+
+    <script src="lang.js"></script>
+
+    <script
+        type="module"
+        src="auth.js"
+    ></script>
+
+</body>
+
+</html>

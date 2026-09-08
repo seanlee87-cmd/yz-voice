@@ -10,182 +10,236 @@
 
 const translations = {
 
+    // =====================================================
+    // 简体中文
+    // =====================================================
+
     "zh-CN": {
 
         // =========================
-        // NAVIGATION
+        // GENERAL / NAVIGATION
         // =========================
 
         login: "登录",
-
         register: "注册",
+        backHome: "返回首页",
+        backLobby: "返回大厅",
+        leaveRoom: "离开房间",
+        loading: "加载中...",
+        live: "直播中",
+        confirm: "确定",
+        cancel: "取消",
+        save: "保存",
+        close: "关闭",
 
 
         // =========================
-        // HERO
+        // HOME HERO
         // =========================
 
-        heroBadge:
-            "🎧 实时语音社交",
+        heroBadge: "🎧 实时语音社交",
 
-        heroTitle1:
-            "用声音",
+        heroTitle1: "用声音",
 
-        heroTitle2:
-            "遇见有趣的人",
+        heroTitle2: "遇见有趣的人",
 
         heroDescription:
             "加入实时语音房，与来自不同地方的人聊天、唱歌、玩游戏，分享属于你的声音。",
 
-        exploreRooms:
-            "探索语音房",
+        exploreRooms: "探索语音房",
 
-        createRoom:
-            "创建房间",
+        createRoom: "创建房间",
 
-        liveVoice:
-            "实时语音",
+        liveVoice: "实时语音",
 
-        happeningVoice:
-            "正在发生的声音",
+        happeningVoice: "正在发生的声音",
 
-        peopleChatting:
-            "2,458 人正在聊天",
+        peopleChatting: "2,458 人正在聊天",
 
 
         // =========================
         // ROOM LIST
         // =========================
 
-        discover:
-            "发现",
+        discover: "发现",
 
-        hotRooms:
-            "热门语音房",
+        hotRooms: "热门语音房",
 
-        discoverText:
-            "发现正在发生的精彩声音",
+        discoverText: "发现正在发生的精彩声音",
 
-        viewAll:
-            "查看全部 →",
+        viewAll: "查看全部 →",
 
-        hot:
-            "热门",
+        hot: "热门",
 
-        singing:
-            "K歌",
+        singing: "K歌",
 
-        chat:
-            "聊天",
+        chat: "聊天",
 
-        game:
-            "游戏",
+        game: "游戏",
 
-        social:
-            "交友",
+        social: "交友",
 
-        host:
-            "房主",
+        host: "房主",
 
-        enterRoom:
-            "进入房间",
+        enterRoom: "进入房间",
 
 
         // =========================
         // ROOM TITLES
         // =========================
 
-        room1:
-            "深夜心事聊天室",
+        room1: "深夜心事聊天室",
 
-        room2:
-            "今晚一起唱歌吧",
+        room2: "今晚一起唱歌吧",
 
-        room3:
-            "LOL 开黑语音房",
+        room3: "LOL 开黑语音房",
 
-        room4:
-            "认识新朋友",
+        room4: "认识新朋友",
 
-        room5:
-            "失眠的人都进来",
+        room5: "失眠的人都进来",
 
-        room6:
-            "深夜 KTV",
+        room6: "深夜 KTV",
+
+
+        // =========================
+        // AUTH PAGE
+        // =========================
+
+        googleLogin: "Google 一键登录",
+
+        wechatLogin: "微信一键登录",
+
+        googleRegister: "使用 Google 注册",
+
+        wechatRegister: "使用微信注册",
+
+        emailRegister: "Email 注册",
+
+        or: "或",
+
+        agreeTerms: "我同意",
+
+        userTerms: "用户条款",
+
+        userIdPlaceholder: "8位用户ID",
+
+        passwordPlaceholder: "密码",
+
+        registerPasswordPlaceholder:
+            "密码（至少8位，含字母+数字）",
+
+        nicknamePlaceholder: "唯一昵称",
+
+        selectGender:
+            "选择性别（以后不能改）",
+
+        male: "男",
+
+        female: "女",
+
+        other: "其他",
+
+        month: "月",
+
+        day: "日",
+
+        yearPrivate:
+            "年份（不公开）",
+
+
+        // =========================
+        // CREATE ROOM PAGE
+        // =========================
+
+        createVoiceRoom: "创建语音房",
+
+        roomNamePlaceholder: "房间名称",
+
+        roomPasswordPlaceholder:
+            "房间密码（可留空）",
+
+        roomCategory: "房间分类",
+
+        create: "创建",
+
+        creating: "正在创建...",
+
+        roomCreateFailed:
+            "创建房间失败",
 
 
         // =========================
         // ROOM PAGE
         // =========================
 
-        backLobby:
-            "返回大厅",
+        online: "人在线",
 
-        leaveRoom:
-            "离开房间",
+        roomOwner: "房主",
 
-        online:
-            "人在线",
+        administrator: "管理员",
+
+        changeBackground:
+            "更换房间背景",
+
+        setAdmin:
+            "设为管理员",
+
+        removeAdmin:
+            "移除管理员",
+
+        adminIdPlaceholder:
+            "管理员8位ID",
 
 
         // =========================
         // MICROPHONE SEATS
         // =========================
 
-        seat1:
-            "1号麦",
+        seat1: "1号麦",
 
-        seat2:
-            "2号麦",
+        seat2: "2号麦",
 
-        seat3:
-            "3号麦",
+        seat3: "3号麦",
 
-        seat4:
-            "4号麦",
+        seat4: "4号麦",
 
-        seat5:
-            "5号麦",
+        seat5: "5号麦",
 
-        seat6:
-            "6号麦",
+        seat6: "6号麦",
 
-        seat7:
-            "7号麦",
+        seat7: "7号麦",
 
-        seat8:
-            "8号麦",
+        // 按你之前的设定：
+        // 8号麦显示为老板位
+        seat8: "老板位",
 
 
         // =========================
         // ROOM CONTROLS
         // =========================
 
-        microphone:
-            "麦克风",
+        microphone: "麦克风",
 
-        microphoneOn:
-            "麦克风开启",
+        microphoneOn: "麦克风开启",
 
-        microphoneOff:
-            "麦克风关闭",
+        microphoneOff: "麦克风关闭",
 
-        speaker:
-            "扬声器",
+        speaker: "扬声器",
 
-        gift:
-            "礼物",
+        gift: "礼物",
+
+        micVolume: "麦克风音量",
+
+        speakerVolume: "扬声器音量",
 
 
         // =========================
         // CHAT
         // =========================
 
-        roomChat:
-            "房间聊天",
+        roomChat: "房间聊天",
 
-        system:
-            "系统",
+        system: "系统",
 
         welcomeRoom:
             "欢迎进入语音房",
@@ -193,8 +247,7 @@ const translations = {
         typeMessage:
             "说点什么...",
 
-        send:
-            "发送",
+        send: "发送",
 
 
         // =========================
@@ -224,33 +277,77 @@ const translations = {
 
 
         // =========================
-        // GENERAL
+        // PROFILE
         // =========================
 
-        loading:
-            "加载中...",
+        profile: "个人资料",
 
-        live:
-            "直播中"
+        nickname: "昵称",
+
+        userId: "用户ID",
+
+        birthday: "生日",
+
+        avatar: "头像",
+
+        changeAvatar: "更换头像",
+
+        wallet: "钱包",
+
+        coins: "金币",
+
+        diamonds: "钻石",
+
+        editProfile: "编辑资料",
+
+        saveProfile: "保存资料",
+
+        logout: "退出登录",
+
+
+        // =========================
+        // GIFT
+        // =========================
+
+        gifts: "礼物",
+
+        sendGift: "赠送",
+
+        coinsNotEnough:
+            "金币不足",
+
+        giftSent:
+            "礼物已送出"
 
     },
 
 
+
+    // =====================================================
+    // 繁體中文
+    // =====================================================
+
     "zh-TW": {
 
         // =========================
-        // NAVIGATION
+        // GENERAL / NAVIGATION
         // =========================
 
-        login:
-            "登入",
-
-        register:
-            "註冊",
+        login: "登入",
+        register: "註冊",
+        backHome: "返回首頁",
+        backLobby: "返回大廳",
+        leaveRoom: "離開房間",
+        loading: "載入中...",
+        live: "直播中",
+        confirm: "確定",
+        cancel: "取消",
+        save: "儲存",
+        close: "關閉",
 
 
         // =========================
-        // HERO
+        // HOME HERO
         // =========================
 
         heroBadge:
@@ -285,8 +382,7 @@ const translations = {
         // ROOM LIST
         // =========================
 
-        discover:
-            "探索",
+        discover: "探索",
 
         hotRooms:
             "熱門語音房",
@@ -343,17 +439,117 @@ const translations = {
 
 
         // =========================
+        // AUTH PAGE
+        // =========================
+
+        googleLogin:
+            "Google 一鍵登入",
+
+        wechatLogin:
+            "微信一鍵登入",
+
+        googleRegister:
+            "使用 Google 註冊",
+
+        wechatRegister:
+            "使用微信註冊",
+
+        emailRegister:
+            "Email 註冊",
+
+        or:
+            "或",
+
+        agreeTerms:
+            "我同意",
+
+        userTerms:
+            "用戶條款",
+
+        userIdPlaceholder:
+            "8位用戶ID",
+
+        passwordPlaceholder:
+            "密碼",
+
+        registerPasswordPlaceholder:
+            "密碼（至少8位，含字母+數字）",
+
+        nicknamePlaceholder:
+            "唯一暱稱",
+
+        selectGender:
+            "選擇性別（以後不能改）",
+
+        male:
+            "男",
+
+        female:
+            "女",
+
+        other:
+            "其他",
+
+        month:
+            "月",
+
+        day:
+            "日",
+
+        yearPrivate:
+            "年份（不公開）",
+
+
+        // =========================
+        // CREATE ROOM PAGE
+        // =========================
+
+        createVoiceRoom:
+            "建立語音房",
+
+        roomNamePlaceholder:
+            "房間名稱",
+
+        roomPasswordPlaceholder:
+            "房間密碼（可留空）",
+
+        roomCategory:
+            "房間分類",
+
+        create:
+            "建立",
+
+        creating:
+            "正在建立...",
+
+        roomCreateFailed:
+            "建立房間失敗",
+
+
+        // =========================
         // ROOM PAGE
         // =========================
 
-        backLobby:
-            "返回大廳",
-
-        leaveRoom:
-            "離開房間",
-
         online:
             "人在線",
+
+        roomOwner:
+            "房主",
+
+        administrator:
+            "管理員",
+
+        changeBackground:
+            "更換房間背景",
+
+        setAdmin:
+            "設為管理員",
+
+        removeAdmin:
+            "移除管理員",
+
+        adminIdPlaceholder:
+            "管理員8位ID",
 
 
         // =========================
@@ -382,7 +578,7 @@ const translations = {
             "7號麥",
 
         seat8:
-            "8號麥",
+            "老闆位",
 
 
         // =========================
@@ -403,6 +599,12 @@ const translations = {
 
         gift:
             "禮物",
+
+        micVolume:
+            "麥克風音量",
+
+        speakerVolume:
+            "揚聲器音量",
 
 
         // =========================
@@ -452,14 +654,61 @@ const translations = {
 
 
         // =========================
-        // GENERAL
+        // PROFILE
         // =========================
 
-        loading:
-            "載入中...",
+        profile:
+            "個人資料",
 
-        live:
-            "直播中"
+        nickname:
+            "暱稱",
+
+        userId:
+            "用戶ID",
+
+        birthday:
+            "生日",
+
+        avatar:
+            "頭像",
+
+        changeAvatar:
+            "更換頭像",
+
+        wallet:
+            "錢包",
+
+        coins:
+            "金幣",
+
+        diamonds:
+            "鑽石",
+
+        editProfile:
+            "編輯資料",
+
+        saveProfile:
+            "儲存資料",
+
+        logout:
+            "登出",
+
+
+        // =========================
+        // GIFT
+        // =========================
+
+        gifts:
+            "禮物",
+
+        sendGift:
+            "贈送",
+
+        coinsNotEnough:
+            "金幣不足",
+
+        giftSent:
+            "禮物已送出"
 
     }
 
@@ -476,7 +725,8 @@ function getCurrentLanguage() {
     return (
         localStorage.getItem(
             "yzVoiceLanguage"
-        ) || "zh-CN"
+        ) ||
+        "zh-CN"
     );
 
 }
@@ -509,8 +759,8 @@ function t(key) {
     }
 
 
-    // 找不到翻译时直接返回 key
-    // 方便我们调试
+    // 找不到翻译时返回 key，
+    // 方便查看哪里漏了翻译
 
     return key;
 
@@ -548,12 +798,13 @@ function setLanguage(language) {
     applyLanguage();
 
 
-    // =========================
+
+    // =====================================================
     // 首页房间卡片重新生成
-    // =========================
+    // =====================================================
 
     if (
-        typeof generateRooms ===
+        typeof window.generateRooms ===
         "function"
     ) {
 
@@ -572,42 +823,45 @@ function setLanguage(language) {
             category =
                 activeButton.getAttribute(
                     "data-category"
-                ) || "all";
+                ) ||
+                "all";
 
         }
 
 
-        generateRooms(
+        window.generateRooms(
             category
         );
 
     }
 
 
-    // =========================
-    // 房间页面重新绘制麦位
-    // =========================
+
+    // =====================================================
+    // 房间麦位重新绘制
+    // =====================================================
 
     if (
-        typeof renderAllSeats ===
+        typeof window.renderAllSeats ===
         "function"
     ) {
 
-        renderAllSeats();
+        window.renderAllSeats();
 
     }
 
 
-    // =========================
-    // 房间在线人数
-    // =========================
+
+    // =====================================================
+    // 房间在线人数刷新
+    // =====================================================
 
     if (
-        typeof updateRoomOnlineText ===
+        typeof window.updateRoomOnlineText ===
         "function"
     ) {
 
-        updateRoomOnlineText();
+        window.updateRoomOnlineText();
 
     }
 
@@ -616,7 +870,7 @@ function setLanguage(language) {
 
 
 // =========================================================
-// APPLY LANGUAGE TO HTML
+// APPLY LANGUAGE
 // =========================================================
 
 function applyLanguage() {
@@ -645,6 +899,7 @@ function applyLanguage() {
 
     // =====================================================
     // NORMAL TEXT
+    // data-i18n="..."
     // =====================================================
 
     document
@@ -661,15 +916,12 @@ function applyLanguage() {
 
 
                 if (
-                    dictionary[
-                        key
-                    ] !== undefined
+                    dictionary[key] !==
+                    undefined
                 ) {
 
-                    element.innerText =
-                        dictionary[
-                            key
-                        ];
+                    element.textContent =
+                        dictionary[key];
 
                 }
 
@@ -680,6 +932,7 @@ function applyLanguage() {
 
     // =====================================================
     // PLACEHOLDER
+    // data-i18n-placeholder="..."
     // =====================================================
 
     document
@@ -696,15 +949,45 @@ function applyLanguage() {
 
 
                 if (
-                    dictionary[
-                        key
-                    ] !== undefined
+                    dictionary[key] !==
+                    undefined
                 ) {
 
                     element.placeholder =
-                        dictionary[
-                            key
-                        ];
+                        dictionary[key];
+
+                }
+
+            }
+        );
+
+
+
+    // =====================================================
+    // TITLE
+    // data-i18n-title="..."
+    // =====================================================
+
+    document
+        .querySelectorAll(
+            "[data-i18n-title]"
+        )
+        .forEach(
+            function(element) {
+
+                const key =
+                    element.getAttribute(
+                        "data-i18n-title"
+                    );
+
+
+                if (
+                    dictionary[key] !==
+                    undefined
+                ) {
+
+                    element.title =
+                        dictionary[key];
 
                 }
 
@@ -734,8 +1017,7 @@ function applyLanguage() {
 
     // =====================================================
     // EMPTY SEAT NAMES
-    // 只修改空麦
-    // 有用户在麦上的话不要覆盖用户名
+    // 有人在麦位时不覆盖用户名
     // =====================================================
 
     for (
@@ -746,9 +1028,7 @@ function applyLanguage() {
 
         const seat =
             document.querySelector(
-                '[data-seat="' +
-                seatNumber +
-                '"]'
+                `[data-seat="${seatNumber}"]`
             );
 
 
@@ -767,7 +1047,7 @@ function applyLanguage() {
             )
         ) {
 
-            seatName.innerText =
+            seatName.textContent =
                 t(
                     "seat" +
                     seatNumber
@@ -780,7 +1060,7 @@ function applyLanguage() {
 
 
     // =====================================================
-    // MICROPHONE BUTTON CURRENT STATUS
+    // MICROPHONE CURRENT TEXT
     // =====================================================
 
     const micText =
@@ -791,13 +1071,15 @@ function applyLanguage() {
 
     if (
         micText &&
-        typeof microphoneEnabled !==
-            "undefined"
+        typeof window.microphoneEnabled !==
+        "undefined"
     ) {
 
-        if (microphoneEnabled) {
+        if (
+            window.microphoneEnabled
+        ) {
 
-            micText.innerText =
+            micText.textContent =
                 t(
                     "microphoneOn"
                 );
@@ -806,7 +1088,7 @@ function applyLanguage() {
 
         else {
 
-            micText.innerText =
+            micText.textContent =
                 t(
                     "microphone"
                 );
@@ -820,8 +1102,7 @@ function applyLanguage() {
 
 
 // =========================================================
-// HELPER
-// 获取空麦文字
+// GET SEAT TEXT
 // =========================================================
 
 function getSeatText(
@@ -838,8 +1119,7 @@ function getSeatText(
 
 
 // =========================================================
-// HELPER
-// 获取在线人数文字
+// GET ONLINE TEXT
 // =========================================================
 
 function getOnlineText(
@@ -850,7 +1130,9 @@ function getOnlineText(
         "👥 " +
         number +
         " " +
-        t("online")
+        t(
+            "online"
+        )
     );
 
 }
@@ -862,19 +1144,21 @@ function getOnlineText(
 // =========================================================
 
 document.addEventListener(
+
     "DOMContentLoaded",
+
     function() {
 
         applyLanguage();
 
     }
+
 );
 
 
 
 // =========================================================
-// EXPOSE FUNCTIONS
-// 给 HTML 的 onclick / onchange 使用
+// EXPOSE FUNCTIONS TO HTML
 // =========================================================
 
 window.setLanguage =
