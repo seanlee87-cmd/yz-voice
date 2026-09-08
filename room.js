@@ -287,7 +287,41 @@ async function joinRoom() {
     me =
         data.me;
 
+    // =====================================================
+    // DELETE ROOM BUTTON
+    // 只有房主显示
+    // =====================================================
 
+    const deleteRoomButton =
+        $("delete-room-button");
+
+
+    if (deleteRoomButton) {
+
+        if (
+            me.uid ===
+            roomInfo.ownerUid
+        ) {
+
+            deleteRoomButton
+                .classList
+                .remove(
+                    "hidden"
+                );
+
+        }
+
+        else {
+
+            deleteRoomButton
+                .classList
+                .add(
+                    "hidden"
+                );
+
+        }
+
+    }
 
     // =====================================================
     // ROOM TITLE
@@ -3109,7 +3143,16 @@ function bindUI() {
 
     renderGiftGrid();
 
+    const deleteRoomButton =
+    $("delete-room-button");
 
+
+    if (deleteRoomButton) {
+
+    deleteRoomButton.onclick =
+        deleteRoom;
+
+    }
 
     if (
         $("gift-button")
@@ -3145,6 +3188,157 @@ function bindUI() {
 // =========================================================
 // GO BACK
 // =========================================================
+
+// =========================================================
+// DELETE ROOM
+// 只有房主可以删除
+// =========================================================
+
+async function deleteRoom() {
+
+    if (!roomInfo || !me) {
+        return;
+    }
+
+    // 再检查一次当前用户是不是房主
+    if (me.uid !== roomInfo.ownerUid) {
+
+        alert("只有房主可以删除房间。");
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            `确定要删除房间「${roomInfo.title || "语音房"}」吗？\n\n删除后无法恢复。`
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    const button =
+        $("delete-room-button");
+
+
+    try {
+
+        if (button) {
+
+            button.disabled = true;
+            button.textContent = "删除中...";
+
+        }
+
+
+        const response =
+            await authFetch(
+                "/api/rooms?action=manage",
+                {
+
+                    method: "POST",
+
+                    body:
+                        JSON.stringify({
+
+                            action: "deleteRoom",
+                            roomId: roomId
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "删除房间失败"
+            );
+
+        }
+
+
+        // 删除成功后先关闭麦克风
+        try {
+
+            if (microphoneEnabled) {
+
+                await stopMicrophone();
+
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                "关闭麦克风失败：",
+                error
+            );
+
+        }
+
+
+        // 断开 LiveKit
+        try {
+
+            if (livekitRoom) {
+
+                livekitRoom.disconnect();
+
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                "断开房间失败：",
+                error
+            );
+
+        }
+
+
+        alert("房间已删除。");
+
+
+        window.location.href =
+            "index.html";
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "删除房间失败：",
+            error
+        );
+
+
+        alert(
+            "删除房间失败：" +
+            error.message
+        );
+
+
+        if (button) {
+
+            button.disabled = false;
+            button.textContent = "删除房间";
+
+        }
+
+    }
+
+}
 
 async function goBack() {
 

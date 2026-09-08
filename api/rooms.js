@@ -277,6 +277,9 @@ async function createRoom(
         admins:
             [],
 
+        maxUsers: 200,
+    
+        
         passwordHash,
 
         hasPassword:
@@ -293,6 +296,8 @@ async function createRoom(
 
         active:
             true
+
+            
 
     });
 
@@ -413,7 +418,7 @@ async function listRooms(
                 maxUsers:
                     Number(
                         data.maxUsers ||
-                        8
+                        200
                     ),
 
                 createdAt
@@ -1035,6 +1040,45 @@ async function manageRoom(
 
     }
 
+    // =====================================================
+    // DELETE ROOM
+    // 只有房主可以删除
+    // =====================================================
+
+    if (
+        requestBody.action ===
+        "deleteRoom"
+    ) {
+
+        if (
+            !isOwner
+        ) {
+
+            return json(
+                res,
+                403,
+                {
+                    error:
+                        "OWNER_ONLY"
+                }
+            );
+
+        }
+
+
+        await roomRef.delete();
+
+
+        return json(
+            res,
+            200,
+            {
+                ok:
+                    true
+            }
+        );
+
+    }
 
     return json(
         res,
