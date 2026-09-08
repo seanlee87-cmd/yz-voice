@@ -476,11 +476,18 @@ if ($("withdraw")) {
 
                 const response =
                     await authFetch(
-                        "/api/wallet/withdraw-request",
+                        "/api/wallet",
                         {
                             method: "POST",
                             body: JSON.stringify({
-                                diamonds
+                                action: "withdraw",
+                                diamonds:
+                                    Math.floor(
+                                        Number(
+                                            $("withdraw-amount").value
+                                        )
+                                    )
+                                
                             })
                         }
                     );
@@ -605,13 +612,14 @@ if ($("exchange-diamonds")) {
 
                 const response =
                     await authFetch(
-                        "/api/wallet/exchange-diamonds",
+                        "/api/wallet",
                         {
                             method:
                                 "POST",
 
                             body:
                                 JSON.stringify({
+                                    action: "exchange",
                                     diamonds
                                 })
                         }
