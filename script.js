@@ -1,90 +1,298 @@
-// =========================
-// GENERATE ROOMS
-// =========================
-
-function generateRooms(category = "all") {
-
-    const roomGrid =
-        document.getElementById(
-            "room-grid"
-        );
+// =========================================================
+// YZ VOICE
+// HOMEPAGE SCRIPT.JS
+// =========================================================
 
 
-    if (!roomGrid) {
+// =========================================================
+// HELPERS
+// =========================================================
+
+function $(id) {
+
+    return document.getElementById(id);
+
+}
+
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+
+// =========================================================
+// SCROLL TO ROOM LIST
+// =========================================================
+
+function scrollToRooms() {
+
+    const roomsSection =
+        $("rooms");
+
+
+    if (!roomsSection) {
 
         return;
 
     }
 
 
-    roomGrid.innerHTML =
-        "";
+    roomsSection.scrollIntoView({
+
+        behavior:
+            "smooth",
+
+        block:
+            "start"
+
+    });
+
+}
+
+
+
+// =========================================================
+// ROOM CATEGORY ICON
+// =========================================================
+
+function getCategoryIcon(
+    category
+) {
+
+    switch (category) {
+
+        case "sing":
+            return "🎵";
+
+        case "chat":
+            return "💬";
+
+        case "game":
+            return "🎮";
+
+        case "social":
+            return "❤️";
+
+        default:
+            return "🎙️";
+
+    }
+
+}
+
+
+
+// =========================================================
+// ROOM CATEGORY TEXT
+// =========================================================
+
+function getCategoryText(
+    category
+) {
+
+    if (
+        typeof window.t ===
+        "function"
+    ) {
+
+        switch (category) {
+
+            case "sing":
+                return window.t(
+                    "singing"
+                );
+
+            case "chat":
+                return window.t(
+                    "chat"
+                );
+
+            case "game":
+                return window.t(
+                    "game"
+                );
+
+            case "social":
+                return window.t(
+                    "social"
+                );
+
+        }
+
+    }
+
+
+    switch (category) {
+
+        case "sing":
+            return "K歌";
+
+        case "chat":
+            return "聊天";
+
+        case "game":
+            return "游戏";
+
+        case "social":
+            return "交友";
+
+        default:
+            return "语音";
+
+    }
+
+}
+
+
+
+// =========================================================
+// GET ROOM LIST
+// =========================================================
+
+function getRoomList() {
+
+    if (
+        typeof appData !==
+            "undefined" &&
+        Array.isArray(
+            appData.rooms
+        )
+    ) {
+
+        return appData.rooms;
+
+    }
+
+
+    return [];
+
+}
+
+
+
+// =========================================================
+// GENERATE ROOM CARDS
+// =========================================================
+
+function generateRooms(
+    category = "all"
+) {
+
+    const grid =
+        $("room-grid");
+
+
+    if (!grid) {
+
+        return;
+
+    }
+
+
+    const rooms =
+        getRoomList();
 
 
     const filteredRooms =
-        appData.rooms.filter(
-            function(room) {
-
-                if (
-                    category === "all"
-                ) {
-
-                    return true;
-
-                }
-
-
-                return (
+        category === "all"
+            ? rooms
+            : rooms.filter(
+                room =>
                     room.category ===
                     category
-                );
+            );
 
-            }
+
+    grid.innerHTML =
+        "";
+
+
+    if (
+        filteredRooms.length ===
+        0
+    ) {
+
+        const empty =
+            document.createElement(
+                "div"
+            );
+
+
+        empty.className =
+            "room-empty";
+
+
+        empty.textContent =
+            "暂无房间";
+
+
+        grid.appendChild(
+            empty
         );
+
+
+        return;
+
+    }
 
 
     filteredRooms.forEach(
         function(room) {
 
-            const roomCard =
+            const card =
                 document.createElement(
-                    "div"
+                    "article"
                 );
 
 
-            roomCard.className =
-                "room-card " +
-                room.color;
+            card.className =
+                "room-card";
 
 
-            // =========================
-            // 房间名称翻译
-            // =========================
+            if (room.color) {
 
-            let roomTitle =
+                card.classList.add(
+                    "room-" +
+                    room.color
+                );
+
+            }
+
+
+            const titleKey =
+                "room" +
+                room.id;
+
+
+            let title =
                 room.title;
 
 
             if (
-                typeof t ===
+                typeof window.t ===
                 "function"
             ) {
 
-                const roomKey =
-                    "room" +
-                    room.id;
-
-
                 const translated =
-                    t(roomKey);
+                    window.t(
+                        titleKey
+                    );
 
 
                 if (
                     translated !==
-                    roomKey
+                    titleKey
                 ) {
 
-                    roomTitle =
+                    title =
                         translated;
 
                 }
@@ -93,71 +301,150 @@ function generateRooms(category = "all") {
 
 
             const hostText =
-                typeof t === "function"
-                    ? t("host")
+                typeof window.t ===
+                "function"
+                    ? window.t(
+                        "host"
+                    )
                     : "房主";
 
 
             const enterText =
-                typeof t === "function"
-                    ? t("enterRoom")
+                typeof window.t ===
+                "function"
+                    ? window.t(
+                        "enterRoom"
+                    )
                     : "进入房间";
 
 
-            roomCard.innerHTML =
+            card.innerHTML = `
 
-                '<div class="room-top">' +
+                <div class="room-card-top">
 
-                    '<div class="room-icon">' +
-                        room.icon +
-                    '</div>' +
+                    <div class="room-icon">
+                        ${
+                            escapeHtml(
+                                room.icon ||
+                                getCategoryIcon(
+                                    room.category
+                                )
+                            )
+                        }
+                    </div>
 
-                    '<span class="live-label">' +
-                        'LIVE' +
-                    '</span>' +
+                    <div class="room-category">
+                        ${
+                            escapeHtml(
+                                getCategoryText(
+                                    room.category
+                                )
+                            )
+                        }
+                    </div>
 
-                '</div>' +
-
-
-                '<div class="room-info">' +
-
-                    '<h3>' +
-                        roomTitle +
-                    '</h3>' +
-
-                    '<p>' +
-                        '🎙️ ' +
-                        hostText +
-                        '：' +
-                        room.host +
-                    '</p>' +
-
-                    '<div class="room-bottom">' +
-
-                        '<span>' +
-
-                            '👥 ' +
-                            room.online +
-                            '/' +
-                            room.maxUsers +
-
-                        '</span>' +
-
-                        '<button onclick="enterRoom(' +
-                            room.id +
-                        ')">' +
-
-                            enterText +
-
-                        '</button>' +
-
-                    '</div>' +
-
-                '</div>';
+                </div>
 
 
-            roomGrid.appendChild(
-                roomCard
+                <h3 class="room-title">
+                    ${
+                        escapeHtml(
+                            title
+                        )
+                    }
+                </h3>
+
+
+                <div class="room-host">
+
+                    <span>
+                        ${escapeHtml(hostText)}
+                    </span>
+
+                    <strong>
+                        ${
+                            escapeHtml(
+                                room.host ||
+                                "-"
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="room-card-bottom">
+
+                    <div class="room-online">
+
+                        👥
+                        ${
+                            Number(
+                                room.online ||
+                                0
+                            )
+                        }
+                        /
+                        ${
+                            Number(
+                                room.maxUsers ||
+                                0
+                            )
+                        }
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="enter-room-btn"
+                    >
+                        ${escapeHtml(enterText)}
+                    </button>
+
+                </div>
+
+            `;
+
+
+            const enterButton =
+                card.querySelector(
+                    ".enter-room-btn"
+                );
+
+
+            if (enterButton) {
+
+                enterButton.addEventListener(
+                    "click",
+                    function(event) {
+
+                        event.stopPropagation();
+
+                        enterRoom(
+                            room
+                        );
+
+                    }
+                );
+
+            }
+
+
+            card.addEventListener(
+                "click",
+                function() {
+
+                    enterRoom(
+                        room
+                    );
+
+                }
+            );
+
+
+            grid.appendChild(
+                card
             );
 
         }
@@ -166,78 +453,525 @@ function generateRooms(category = "all") {
 }
 
 
-// =========================
+
+// =========================================================
 // FILTER ROOMS
-// =========================
+// =========================================================
 
-function filterRooms(category, button) {
+function filterRooms(
+    category,
+    button
+) {
 
-    const filterButtons =
-        document.querySelectorAll(
-            ".filter-btn"
+    document
+        .querySelectorAll(
+            ".room-filter .filter-btn"
+        )
+        .forEach(
+            function(item) {
+
+                item.classList.remove(
+                    "active"
+                );
+
+            }
         );
 
 
-    filterButtons.forEach(
-        function(btn) {
+    if (button) {
 
-            btn.classList.remove(
-                "active"
+        button.classList.add(
+            "active"
+        );
+
+    }
+
+
+    generateRooms(
+        category
+    );
+
+}
+
+
+
+// =========================================================
+// ENTER ROOM
+// =========================================================
+
+function enterRoom(
+    room
+) {
+
+    if (!room) {
+
+        return;
+
+    }
+
+
+    const roomId =
+        room.roomId ||
+        room.id;
+
+
+    window.location.href =
+        "room.html?id=" +
+        encodeURIComponent(
+            roomId
+        );
+
+}
+
+
+
+// =========================================================
+// CREATE ROOM
+// =========================================================
+
+function goCreateRoom() {
+
+    window.location.href =
+        "create-room.html";
+
+}
+
+
+
+// =========================================================
+// AUTH NAVIGATION
+// =========================================================
+
+async function updateHomepageUser() {
+
+    const guestNav =
+        $("guest-nav");
+
+
+    const userNav =
+        $("user-nav");
+
+
+    const nicknameElement =
+        $("nav-user-nickname");
+
+
+    const avatarElement =
+        $("nav-user-avatar");
+
+
+    try {
+
+        const authModule =
+            await import(
+                "./auth-client.js"
             );
+
+
+        // =================================================
+        // WAIT FOR FIREBASE AUTH STATE
+        // =================================================
+
+        let user =
+            null;
+
+
+        if (
+            typeof authModule
+                .getCurrentUser ===
+            "function"
+        ) {
+
+            user =
+                await authModule
+                    .getCurrentUser();
+
+        }
+
+        else if (
+            typeof authModule
+                .requireUser ===
+            "function"
+        ) {
+
+            try {
+
+                user =
+                    await authModule
+                        .requireUser(
+                            false
+                        );
+
+            }
+
+            catch (error) {
+
+                user =
+                    null;
+
+            }
+
+        }
+
+
+        // =================================================
+        // NOT LOGGED IN
+        // =================================================
+
+        if (!user) {
+
+            showGuestNav();
+
+            return;
+
+        }
+
+
+        // =================================================
+        // LOGGED IN
+        // =================================================
+
+        if (guestNav) {
+
+            guestNav.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        if (userNav) {
+
+            userNav.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        // =================================================
+        // LOAD PROFILE
+        // =================================================
+
+        if (
+            typeof authModule
+                .authFetch !==
+            "function"
+        ) {
+
+            return;
+
+        }
+
+
+        const response =
+            await authModule.authFetch(
+                "/api/profile"
+            );
+
+
+        if (
+            response.status ===
+            404
+        ) {
+
+            return;
+
+        }
+
+
+        if (!response.ok) {
+
+            console.warn(
+                "读取首页用户资料失败：",
+                response.status
+            );
+
+            return;
+
+        }
+
+
+        const profile =
+            await response.json();
+
+
+        // =================================================
+        // NICKNAME
+        // =================================================
+
+        if (
+            nicknameElement
+        ) {
+
+            nicknameElement.textContent =
+                profile.nickname ||
+                user.displayName ||
+                "用户";
+
+        }
+
+
+        // =================================================
+        // AVATAR
+        // =================================================
+
+        if (
+            avatarElement
+        ) {
+
+            const avatarUrl =
+                profile.avatarUrl ||
+                user.photoURL ||
+                "";
+
+
+            if (avatarUrl) {
+
+                avatarElement.src =
+                    avatarUrl;
+
+            }
+
+            else {
+
+                avatarElement.removeAttribute(
+                    "src"
+                );
+
+                avatarElement.alt =
+                    "👤";
+
+            }
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "首页登录状态检查：未登录或读取失败",
+            error
+        );
+
+
+        showGuestNav();
+
+    }
+
+}
+
+
+
+// =========================================================
+// SHOW GUEST NAV
+// =========================================================
+
+function showGuestNav() {
+
+    const guestNav =
+        $("guest-nav");
+
+
+    const userNav =
+        $("user-nav");
+
+
+    if (guestNav) {
+
+        guestNav.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    if (userNav) {
+
+        userNav.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+
+// =========================================================
+// BIND CREATE ROOM BUTTONS
+// =========================================================
+
+function bindCreateRoomButtons() {
+
+    document
+        .querySelectorAll(
+            ".secondary-btn, .floating-create"
+        )
+        .forEach(
+            function(button) {
+
+                // 如果 HTML 本身已经有 onclick，
+                // 就不重复绑定
+
+                if (
+                    button.getAttribute(
+                        "onclick"
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                button.addEventListener(
+                    "click",
+                    goCreateRoom
+                );
+
+            }
+        );
+
+}
+
+
+
+// =========================================================
+// BIND FILTER BUTTON DATA
+// =========================================================
+
+function prepareFilterButtons() {
+
+    const buttons =
+        document.querySelectorAll(
+            ".room-filter .filter-btn"
+        );
+
+
+    buttons.forEach(
+        function(button) {
+
+            const onclickText =
+                button.getAttribute(
+                    "onclick"
+                ) || "";
+
+
+            if (
+                onclickText.includes(
+                    "'sing'"
+                )
+            ) {
+
+                button.dataset.category =
+                    "sing";
+
+            }
+
+            else if (
+                onclickText.includes(
+                    "'chat'"
+                )
+            ) {
+
+                button.dataset.category =
+                    "chat";
+
+            }
+
+            else if (
+                onclickText.includes(
+                    "'game'"
+                )
+            ) {
+
+                button.dataset.category =
+                    "game";
+
+            }
+
+            else if (
+                onclickText.includes(
+                    "'social'"
+                )
+            ) {
+
+                button.dataset.category =
+                    "social";
+
+            }
+
+            else {
+
+                button.dataset.category =
+                    "all";
+
+            }
 
         }
     );
 
-
-    button.classList.add(
-        "active"
-    );
-
-
-    generateRooms(category);
-
 }
 
 
-// =========================
-// ENTER ROOM
-// =========================
 
-function enterRoom(roomId) {
-
-    window.location.href =
-        "room.html?id=" +
-        roomId;
-
-}
-
-
-// =========================
-// SCROLL TO ROOMS
-// =========================
-
-function scrollToRooms() {
-
-    document
-        .getElementById("rooms")
-        .scrollIntoView({
-
-            behavior: "smooth"
-
-        });
-
-}
-
-
-// =========================
-// LOAD APP
-// =========================
+// =========================================================
+// PAGE START
+// =========================================================
 
 document.addEventListener(
     "DOMContentLoaded",
     function() {
 
-        generateRooms();
+        console.log(
+            "✅ YZ Voice 首页 script.js 已加载"
+        );
+
+
+        prepareFilterButtons();
+
+
+        generateRooms(
+            "all"
+        );
+
+
+        bindCreateRoomButtons();
+
+
+        updateHomepageUser();
 
     }
 );
+
+
+
+// =========================================================
+// EXPOSE FUNCTIONS
+// 给 HTML onclick / lang.js 使用
+// =========================================================
+
+window.scrollToRooms =
+    scrollToRooms;
+
+
+window.filterRooms =
+    filterRooms;
+
+
+window.generateRooms =
+    generateRooms;
+
+
+window.enterRoom =
+    enterRoom;
+
+
+window.goCreateRoom =
+    goCreateRoom;
+
+
+window.updateHomepageUser =
+    updateHomepageUser;
