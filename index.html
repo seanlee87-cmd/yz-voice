@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>YZ Voice</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         NAVIGATION
+    ========================= -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                🎙️
+            </div>
+
+
+            <div>
+
+                <h2>
+                    YZ VOICE
+                </h2>
+
+                <span>
+                    VOICE SOCIAL PLATFORM
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="nav-right">
+
+
+            <!-- LANGUAGE -->
+
+            <select
+                id="language-selector"
+                class="language-selector"
+                onchange="setLanguage(this.value)"
+            >
+
+                <option value="zh-CN">
+                    简体中文
+                </option>
+
+                <option value="zh-TW">
+                    繁體中文
+                </option>
+
+            </select>
+
+
+            <button
+                class="login-btn"
+                data-i18n="login"
+            >
+                登录
+            </button>
+
+
+            <button
+                class="register-btn"
+                data-i18n="register"
+            >
+                注册
+            </button>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <span
+                class="hero-badge"
+                data-i18n="heroBadge"
+            >
+                🎧 实时语音社交
+            </span>
+
+
+            <h1>
+
+                <span data-i18n="heroTitle1">
+                    用声音
+                </span>
+
+                <br>
+
+                <span data-i18n="heroTitle2">
+                    遇见有趣的人
+                </span>
+
+            </h1>
+
+
+            <p data-i18n="heroDescription">
+
+                加入实时语音房，与来自不同地方的人聊天、
+                唱歌、玩游戏，分享属于你的声音。
+
+            </p>
+
+
+            <div class="hero-buttons">
+
+                <button
+                    class="primary-btn"
+                    onclick="scrollToRooms()"
+                >
+
+                    🎙️
+
+                    <span data-i18n="exploreRooms">
+                        探索语音房
+                    </span>
+
+                </button>
+
+
+                <button class="secondary-btn">
+
+                    +
+
+                    <span data-i18n="createRoom">
+                        创建房间
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="hero-visual">
+
+            <div class="voice-circle circle-1">
+                🎤
+            </div>
+
+
+            <div class="voice-circle circle-2">
+                🎧
+            </div>
+
+
+            <div class="voice-circle circle-3">
+                💬
+            </div>
+
+
+            <div class="main-voice-card">
+
+                <div class="live-dot"></div>
+
+
+                <span data-i18n="liveVoice">
+                    实时语音
+                </span>
+
+
+                <h3 data-i18n="happeningVoice">
+                    正在发生的声音
+                </h3>
+
+
+                <p data-i18n="peopleChatting">
+                    2,458 人正在聊天
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         ROOM SECTION
+    ========================= -->
+
+    <section
+        class="rooms-section"
+        id="rooms"
+    >
+
+        <div class="section-header">
+
+            <div>
+
+                <span
+                    class="section-tag"
+                    data-i18n="discover"
+                >
+                    发现
+                </span>
+
+
+                <h2 data-i18n="hotRooms">
+                    热门语音房
+                </h2>
+
+
+                <p data-i18n="discoverText">
+                    发现正在发生的精彩声音
+                </p>
+
+            </div>
+
+
+            <button
+                class="view-all"
+                data-i18n="viewAll"
+            >
+                查看全部 →
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             ROOM FILTER
+        ========================= -->
+
+        <div class="room-filter">
+
+
+            <button
+                class="filter-btn active"
+                data-category="all"
+                onclick="filterRooms('all', this)"
+            >
+
+                🔥
+
+                <span data-i18n="hot">
+                    热门
+                </span>
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-category="sing"
+                onclick="filterRooms('sing', this)"
+            >
+
+                🎵
+
+                <span data-i18n="singing">
+                    K歌
+                </span>
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-category="chat"
+                onclick="filterRooms('chat', this)"
+            >
+
+                💬
+
+                <span data-i18n="chat">
+                    聊天
+                </span>
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-category="game"
+                onclick="filterRooms('game', this)"
+            >
+
+                🎮
+
+                <span data-i18n="game">
+                    游戏
+                </span>
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-category="social"
+                onclick="filterRooms('social', this)"
+            >
+
+                ❤️
+
+                <span data-i18n="social">
+                    交友
+                </span>
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             ROOM GRID
+        ========================= -->
+
+        <div
+            class="room-grid"
+            id="room-grid"
+        >
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         CREATE ROOM
+    ========================= -->
+
+    <button class="floating-create">
+        +
+    </button>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script src="config.js"></script>
+
+    <script src="lang.js"></script>
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>
