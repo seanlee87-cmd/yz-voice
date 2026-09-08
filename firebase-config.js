@@ -1,4 +1,4 @@
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyD_K47xGZD-Dy6JQbIwgX3Ji53cgNBjslA",
   authDomain: "yz-voice.firebaseapp.com",
   projectId: "yz-voice",
