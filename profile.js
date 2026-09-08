@@ -567,3 +567,127 @@ if ($("logout")) {
 ========================= */
 
 initProfilePage();
+
+if ($("exchange-diamonds")) {
+
+    $("exchange-diamonds").onclick =
+        async () => {
+
+            try {
+
+                const diamonds =
+                    Math.floor(
+                        Number(
+                            $("exchange-amount")
+                                .value
+                        )
+                    );
+
+
+                if (
+                    !Number.isFinite(
+                        diamonds
+                    ) ||
+                    diamonds <= 0
+                ) {
+
+                    throw new Error(
+                        "请输入正确的钻石数量"
+                    );
+
+                }
+
+
+                setStatus(
+                    "正在兑换..."
+                );
+
+
+                const response =
+                    await authFetch(
+                        "/api/wallet/exchange-diamonds",
+                        {
+                            method:
+                                "POST",
+
+                            body:
+                                JSON.stringify({
+                                    diamonds
+                                })
+                        }
+                    );
+
+
+                const raw =
+                    await response.text();
+
+
+                let data =
+                    {};
+
+
+                try {
+
+                    data =
+                        JSON.parse(
+                            raw
+                        );
+
+                } catch {
+                }
+
+
+                if (!response.ok) {
+
+                    if (
+                        data.error ===
+                        "INSUFFICIENT_DIAMONDS"
+                    ) {
+
+                        throw new Error(
+                            "钻石余额不足"
+                        );
+
+                    }
+
+
+                    throw new Error(
+                        data.error ||
+                        "兑换失败"
+                    );
+
+                }
+
+
+                $("exchange-amount")
+                    .value =
+                    "";
+
+
+                setStatus(
+                    `兑换成功：${diamonds} 钻石 → ${diamonds} 金币`
+                );
+
+
+                await loadProfile();
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "钻石兑换失败:",
+                    error
+                );
+
+
+                setStatus(
+                    error.message,
+                    true
+                );
+
+            }
+
+        };
+
+}
