@@ -3555,3 +3555,507 @@ select option {
     }
 
 }
+
+/* =====================================================
+   ROOM 页面紧凑布局
+   ===================================================== */
+
+/* 整个房间主要区域 */
+.room-layout {
+    height: calc(100vh - 90px);
+    min-height: 0;
+}
+
+/* 左边语音区域 */
+.voice-stage {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 14px 22px !important;
+}
+
+/* 房主区域缩小 */
+.room-host-box {
+    margin-bottom: 10px !important;
+}
+
+/* 麦位整体往上、缩紧 */
+.seat-grid {
+    margin-top: 8px !important;
+    gap: 20px 55px !important;
+}
+
+/* 麦位圆圈稍微缩小 */
+.voice-seat {
+    transform: scale(0.88);
+}
+
+/* 底部控制区不要被推到屏幕外 */
+.room-controls {
+    position: relative;
+    margin-top: 10px !important;
+    padding: 8px 12px !important;
+}
+
+/* 聊天输入区域 */
+.chat-input,
+.room-chat-input,
+.chat-input-area {
+    margin-top: 8px !important;
+}
+
+/* 右边聊天栏也限制在屏幕高度 */
+.room-chat,
+.chat-panel {
+    height: calc(100vh - 110px);
+    min-height: 0;
+}
+
+/* =====================================================
+   ROOM COMPACT LAYOUT
+   让麦位、控制按钮、聊天输入整体往上
+   ===================================================== */
+
+.room-page {
+    overflow: hidden;
+}
+
+/* 整个房间主体 */
+.room-layout {
+    height: calc(100vh - 72px) !important;
+    min-height: 0 !important;
+    gap: 16px !important;
+}
+
+/* 左侧语音舞台 */
+.voice-stage {
+    min-height: 0 !important;
+    height: 100% !important;
+    padding: 14px 18px !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* 房间头像/标题区域缩小 */
+.room-host-box {
+    margin-bottom: 6px !important;
+}
+
+/* 麦位区域不要撑满整页 */
+.seat-grid {
+    flex: 0 0 auto !important;
+
+    margin-top: 6px !important;
+    margin-bottom: 8px !important;
+
+    row-gap: 24px !important;
+    column-gap: 42px !important;
+}
+
+/* 麦位整体稍微缩小 */
+.voice-seat {
+    transform: scale(0.88);
+    transform-origin: center;
+}
+
+/* 控制按钮直接跟在麦位下面 */
+.room-controls {
+    margin-top: 6px !important;
+    padding: 8px !important;
+
+    position: static !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    gap: 10px !important;
+}
+
+/* 麦克风 / 扬声器 / 礼物按钮缩小 */
+.control-button {
+    min-width: 74px !important;
+    min-height: 56px !important;
+
+    padding: 7px 12px !important;
+
+    border-radius: 12px !important;
+}
+
+.control-icon {
+    font-size: 18px !important;
+}
+
+.control-label {
+    font-size: 13px !important;
+}
+
+/* 右侧聊天栏限制在屏幕内 */
+.chat-panel {
+    min-height: 0 !important;
+    height: 100% !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* 聊天记录占剩余空间 */
+.chat-messages {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+}
+
+/* 输入框固定在聊天底部 */
+.chat-input-area {
+    flex: 0 0 auto !important;
+    position: static !important;
+}
+
+/* =========================
+   手机
+   ========================= */
+
+/* =====================================================
+   MOBILE VOICE APP LAYOUT
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+    /* 整页 */
+    .room-page {
+        overflow: hidden !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+    }
+
+
+    /* =========================
+       顶部房间栏
+       ========================= */
+
+    .room-topbar {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 100 !important;
+
+        height: 58px !important;
+        min-height: 58px !important;
+
+        padding: 6px 10px !important;
+    }
+
+    .room-top-center h2 {
+        font-size: 18px !important;
+        margin: 0 !important;
+    }
+
+    #room-online {
+        font-size: 12px !important;
+    }
+
+    .room-top-left,
+    .room-top-right {
+        gap: 5px !important;
+    }
+
+    .back-btn,
+    .room-leave-btn,
+    .delete-room-btn {
+        min-height: 36px !important;
+        padding: 5px 9px !important;
+        font-size: 12px !important;
+        border-radius: 10px !important;
+    }
+
+
+    /* =========================
+       整个房间主体
+       ========================= */
+
+    .room-layout {
+        height: calc(100vh - 58px) !important;
+        min-height: 0 !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        overflow: hidden !important;
+
+        gap: 0 !important;
+    }
+
+
+    /* =========================
+       语音舞台
+       ========================= */
+
+    .voice-stage {
+        flex: 0 0 auto !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+
+        padding: 8px 8px 76px !important;
+
+        overflow: visible !important;
+    }
+
+
+    /* =========================
+       房间头像 + 房名
+       ========================= */
+
+    .room-host-box {
+        margin: 0 0 4px 0 !important;
+
+        transform: scale(0.86);
+        transform-origin: left top;
+    }
+
+    .room-host-text strong {
+        font-size: 13px !important;
+    }
+
+    #host-avatar {
+        width: 38px !important;
+        height: 38px !important;
+    }
+
+
+    /* =========================
+       8 个麦位
+       ========================= */
+
+    .seat-grid {
+        flex: none !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+
+        row-gap: 2px !important;
+        column-gap: 0 !important;
+
+        align-items: center !important;
+        justify-items: center !important;
+    }
+
+    .voice-seat {
+        transform: scale(0.68);
+        transform-origin: center;
+
+        margin: -5px 0 !important;
+    }
+
+    .seat-avatar {
+        width: 64px !important;
+        height: 64px !important;
+    }
+
+    .voice-seat span {
+        font-size: 12px !important;
+        margin-top: 3px !important;
+    }
+
+
+    /* =========================
+       底部功能按钮
+       麦克风 / 扬声器 / 礼物
+       ========================= */
+
+    .room-controls {
+        position: fixed !important;
+
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+
+        bottom: 58px !important;
+
+        z-index: 200 !important;
+
+        width: auto !important;
+
+        margin: 0 !important;
+        padding: 5px 7px !important;
+
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+
+        gap: 6px !important;
+
+        border-radius: 16px !important;
+
+        backdrop-filter: blur(14px);
+    }
+
+    .control-button {
+        width: 64px !important;
+        min-width: 64px !important;
+
+        height: 50px !important;
+        min-height: 50px !important;
+
+        padding: 4px !important;
+
+        border-radius: 12px !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+
+        gap: 2px !important;
+    }
+
+    .control-icon {
+        font-size: 18px !important;
+        line-height: 1 !important;
+    }
+
+    .control-label {
+        font-size: 11px !important;
+        line-height: 1.1 !important;
+    }
+
+
+    /* 手机上暂时隐藏两个音量滑杆 */
+    .volume-control {
+        display: none !important;
+    }
+
+
+    /* =========================
+       聊天区域
+       ========================= */
+
+    .chat-panel {
+        flex: 1 1 auto !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+
+        margin: 0 8px 0 8px !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        overflow: hidden !important;
+
+        border-radius: 14px 14px 0 0 !important;
+    }
+
+    .chat-header {
+        flex: 0 0 auto !important;
+
+        padding: 8px 10px !important;
+    }
+
+    .chat-header h3 {
+        font-size: 15px !important;
+        margin: 0 !important;
+    }
+
+
+    /* 聊天记录 */
+    .chat-messages {
+        flex: 1 1 auto !important;
+
+        min-height: 0 !important;
+
+        padding: 8px 10px 120px !important;
+
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .chat-message {
+        margin-bottom: 8px !important;
+    }
+
+    .chat-message strong {
+        font-size: 12px !important;
+    }
+
+    .chat-message p {
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        margin-top: 2px !important;
+    }
+
+
+    /* =========================
+       最底部输入框
+       ========================= */
+
+    .chat-input-area {
+        position: fixed !important;
+
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+
+        z-index: 220 !important;
+
+        height: 58px !important;
+
+        padding: 7px 8px !important;
+
+        display: flex !important;
+        align-items: center !important;
+
+        gap: 6px !important;
+
+        backdrop-filter: blur(16px);
+    }
+
+    #chat-input {
+        flex: 1 !important;
+
+        height: 42px !important;
+        min-height: 42px !important;
+
+        font-size: 14px !important;
+
+        border-radius: 12px !important;
+
+        padding: 8px 10px !important;
+    }
+
+    #chat-send-button {
+        width: 64px !important;
+        height: 42px !important;
+
+        min-height: 42px !important;
+
+        padding: 5px !important;
+
+        border-radius: 12px !important;
+
+        font-size: 13px !important;
+    }
+
+
+    /* =========================
+       礼物弹窗
+       ========================= */
+
+    .modal {
+        align-items: flex-end !important;
+    }
+
+    .modal-card {
+        width: 100% !important;
+        max-width: none !important;
+
+        max-height: 68vh !important;
+
+        border-radius: 20px 20px 0 0 !important;
+
+        overflow-y: auto !important;
+    }
+
+}
