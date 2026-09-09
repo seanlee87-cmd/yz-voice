@@ -285,6 +285,8 @@ async function createRoom(
         hasPassword:
             Boolean(password),
 
+        roomAvatarUrl: "",
+
         backgroundUrl:
             "",
 
@@ -665,6 +667,10 @@ async function joinRoom(
 
                 backgroundUrl:
                     room.backgroundUrl ||
+                    "",
+
+                roomAvatarUrl:
+                    room.roomAvatarUrl || 
                     ""
 
             },
@@ -822,6 +828,7 @@ async function manageRoom(
         const updates =
             {};
 
+        
 
         if (
             requestBody.backgroundUrl !==
@@ -833,6 +840,19 @@ async function manageRoom(
                     requestBody.backgroundUrl ||
                     ""
                 );
+
+        if (
+            requestBody.roomAvatarUrl !==
+            undefined
+        ) {
+
+            updates.roomAvatarUrl =
+                String(
+                    requestBody.roomAvatarUrl ||
+                    ""
+                );
+
+        }
 
         }
 

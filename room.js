@@ -134,6 +134,362 @@ function avatarFallback(seed) {
 
 }
 
+function updateHostAvatar() {
+
+    const avatar =
+        document.getElementById("host-avatar");
+
+    if (!avatar || !roomInfo) {
+        return;
+    }
+
+    avatar.src =
+        roomInfo.roomAvatarUrl ||
+        avatarFallback(
+            roomInfo.ownerUid || "YZ"
+        );
+
+}
+
+function bindRoomAvatarClick() {
+
+    const avatar =
+        document.getElementById("host-avatar");
+
+    const fileInput =
+        document.getElementById("room-avatar-file");
+
+    if (
+        !avatar ||
+        !fileInput ||
+        !roomInfo ||
+        !me
+    ) {
+        return;
+    }
+
+    const isOwner =
+        me.uid === roomInfo.ownerUid;
+
+    if (!isOwner) {
+
+        avatar.style.cursor = "default";
+
+        avatar.onclick = null;
+
+        return;
+    }
+
+    avatar.style.cursor = "pointer";
+
+    avatar.title = "点击更换房间头像";
+
+    avatar.onclick =
+        function() {
+
+            fileInput.click();
+
+            
+        };
+
+        fileInput.onchange =
+                handleRoomAvatarChange;
+}
+
+function compressRoomAvatar(file) {
+
+    return new Promise(
+        function(resolve, reject) {
+
+            if (!file) {
+
+                reject(
+                    new Error(
+                        "请选择图片"
+                    )
+                );
+
+                return;
+            }
+
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                reject(
+                    new Error(
+                        "请选择图片文件"
+                    )
+                );
+
+                return;
+            }
+
+            if (
+                file.size >
+                10 * 1024 * 1024
+            ) {
+
+                reject(
+                    new Error(
+                        "图片不能超过 10MB"
+                    )
+                );
+
+                return;
+            }
+
+            const reader =
+                new FileReader();
+
+            reader.onload =
+                function() {
+
+                    const image =
+                        new Image();
+
+                    image.onload =
+                        function() {
+
+                            const size =
+                                256;
+
+                            const canvas =
+                                document.createElement(
+                                    "canvas"
+                                );
+
+                            canvas.width =
+                                size;
+
+                            canvas.height =
+                                size;
+
+                            const ctx =
+                                canvas.getContext(
+                                    "2d"
+                                );
+
+                            if (!ctx) {
+
+                                reject(
+                                    new Error(
+                                        "浏览器无法处理图片"
+                                    )
+                                );
+
+                                return;
+                            }
+
+                            const sourceSize =
+                                Math.min(
+                                    image.width,
+                                    image.height
+                                );
+
+                            const sourceX =
+                                (
+                                    image.width -
+                                    sourceSize
+                                ) / 2;
+
+                            const sourceY =
+                                (
+                                    image.height -
+                                    sourceSize
+                                ) / 2;
+
+                            ctx.drawImage(
+                                image,
+                                sourceX,
+                                sourceY,
+                                sourceSize,
+                                sourceSize,
+                                0,
+                                0,
+                                size,
+                                size
+                            );
+
+                            const dataUrl =
+                                canvas.toDataURL(
+                                    "image/jpeg",
+                                    0.78
+                                );
+
+                            resolve(
+                                dataUrl
+                            );
+
+                        };
+
+                    image.onerror =
+                        function() {
+
+                            reject(
+                                new Error(
+                                    "无法读取图片"
+                                )
+                            );
+
+                        };
+
+                    image.src =
+                        reader.result;
+
+                };
+
+            reader.onerror =
+                function() {
+
+                    reject(
+                        new Error(
+                            "读取图片失败"
+                        )
+                    );
+
+                };
+
+            reader.readAsDataURL(
+                file
+            );
+
+        }
+    );
+
+}
+
+
+async function handleRoomAvatarChange(
+    event
+) {
+
+    const input =
+        event.target;
+
+    const file =
+        input.files?.[0];
+
+    if (!file) {
+        return;
+    }
+
+    if (
+        !roomInfo ||
+        !me ||
+        me.uid !==
+            roomInfo.ownerUid
+    ) {
+
+        alert(
+            "只有房主可以修改房间头像。"
+        );
+
+        input.value =
+            "";
+
+        return;
+    }
+
+    const avatar =
+        document.getElementById(
+            "host-avatar"
+        );
+
+    try {
+
+        if (avatar) {
+
+            avatar.style.opacity =
+                "0.5";
+
+        }
+
+        const roomAvatarUrl =
+            await compressRoomAvatar(
+                file
+            );
+
+        const response =
+            await authFetch(
+                "/api/rooms?action=manage",
+                {
+                    method:
+                        "POST",
+
+                    body:
+                        JSON.stringify({
+                            action:
+                                "updateRoom",
+
+                            roomId:
+                                roomId,
+
+                            roomAvatarUrl:
+                                roomAvatarUrl
+                        })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "房间头像保存失败"
+            );
+
+        }
+
+        roomInfo.roomAvatarUrl =
+            roomAvatarUrl;
+
+        if (avatar) {
+
+            avatar.src =
+                roomAvatarUrl;
+
+        }
+
+        alert(
+            "房间头像已更新。"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "房间头像更新失败：",
+            error
+        );
+
+        alert(
+            "更换房间头像失败：" +
+            error.message
+        );
+
+    }
+
+    finally {
+
+        if (avatar) {
+
+            avatar.style.opacity =
+                "1";
+
+        }
+
+        input.value =
+            "";
+
+    }
+
+}
 
 function participantName(
     participant
@@ -355,6 +711,10 @@ async function joinRoom() {
 
     await loadRoomOwner();
 
+    updateHostAvatar();
+
+    bindRoomAvatarClick();
+
 
 
     // =====================================================
@@ -468,62 +828,36 @@ async function joinRoom() {
 
 async function loadRoomOwner() {
 
-    try {
-
-        const ownerSnapshot =
-            await getDoc(
-
-                doc(
-                    db,
-                    "users",
-                    roomInfo.ownerUid
-                )
-
-            );
+    if (!roomInfo) {
+        return;
+    }
 
 
-        if (
-            ownerSnapshot.exists()
-        ) {
+    // 房主位显示房间名称
+    if (
+        $("room-host")
+    ) {
 
-            const owner =
-                ownerSnapshot.data();
-
-
-            if (
-                $("room-host")
-            ) {
-
-                $("room-host")
-                    .textContent =
-                    owner.nickname ||
-                    "房主";
-
-            }
-
-
-            if (
-                $("host-avatar")
-            ) {
-
-                $("host-avatar").src =
-                    owner.avatarUrl ||
-                    avatarFallback(
-                        owner.publicId
-                    );
-
-            }
-
-        }
+        $("room-host")
+            .textContent =
+            roomInfo.title ||
+            "语音房";
 
     }
 
-    catch (error) {
 
-        console.error(
-            "读取房主资料失败：",
-            error
-        );
+    // 房主位显示房间头像
+    if (
+        $("host-avatar")
+    ) {
+
+        $("host-avatar").src =
+            roomInfo.roomAvatarUrl ||
+            avatarFallback(
+                roomInfo.id ||
+                roomInfo.title ||
+                "YZ"
+            );
 
     }
 
