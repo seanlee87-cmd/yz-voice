@@ -804,57 +804,31 @@ async function manageRoom(
     // =====================================================
 
     if (
-        requestBody.action ===
-        "updateRoom"
-    ) {
+    requestBody.backgroundUrl !==
+    undefined
+) {
 
-        if (
-            !isOwner &&
-            !isAdmin
-        ) {
+    updates.backgroundUrl =
+        String(
+            requestBody.backgroundUrl ||
+            ""
+        );
 
-            return json(
-                res,
-                403,
-                {
-                    error:
-                        "FORBIDDEN"
-                }
-            );
-
-        }
+}
 
 
-        const updates =
-            {};
+if (
+    requestBody.roomAvatarUrl !==
+    undefined
+) {
 
-        
+    updates.roomAvatarUrl =
+        String(
+            requestBody.roomAvatarUrl ||
+            ""
+        );
 
-        if (
-            requestBody.backgroundUrl !==
-            undefined
-        ) {
-
-            updates.backgroundUrl =
-                String(
-                    requestBody.backgroundUrl ||
-                    ""
-                );
-
-        if (
-            requestBody.roomAvatarUrl !==
-            undefined
-        ) {
-
-            updates.roomAvatarUrl =
-                String(
-                    requestBody.roomAvatarUrl ||
-                    ""
-                );
-
-        }
-
-        }
+}
 
 
         if (
