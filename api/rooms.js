@@ -801,35 +801,74 @@ async function manageRoom(
 
     // =====================================================
     // UPDATE ROOM
+    // 房主 / 管理员可以修改
     // =====================================================
 
     if (
-    requestBody.backgroundUrl !==
-    undefined
-) {
+        requestBody.action ===
+        "updateRoom"
+    ) {
 
-    updates.backgroundUrl =
-        String(
-            requestBody.backgroundUrl ||
-            ""
-        );
+        if (
+            !isOwner &&
+            !isAdmin
+        ) {
 
-}
+            return json(
+                res,
+                403,
+                {
+                    error:
+                        "FORBIDDEN"
+                }
+            );
+
+        }
 
 
-if (
-    requestBody.roomAvatarUrl !==
-    undefined
-) {
+        const updates =
+            {};
 
-    updates.roomAvatarUrl =
-        String(
-            requestBody.roomAvatarUrl ||
-            ""
-        );
 
-}
+        // =================================================
+        // 房间背景
+        // =================================================
 
+        if (
+            requestBody.backgroundUrl !==
+            undefined
+        ) {
+
+            updates.backgroundUrl =
+                String(
+                    requestBody.backgroundUrl ||
+                    ""
+                );
+
+        }
+
+
+        // =================================================
+        // 房间头像
+        // =================================================
+
+        if (
+            requestBody.roomAvatarUrl !==
+            undefined
+        ) {
+
+            updates.roomAvatarUrl =
+                String(
+                    requestBody.roomAvatarUrl ||
+                    ""
+                );
+
+        }
+
+
+        // =================================================
+        // 房间名称
+        // =================================================
 
         if (
             requestBody.title !==
@@ -841,11 +880,11 @@ if (
                     requestBody.title ||
                     ""
                 )
-                    .trim()
-                    .slice(
-                        0,
-                        30
-                    );
+                .trim()
+                .slice(
+                    0,
+                    30
+                );
 
 
             if (
@@ -871,6 +910,10 @@ if (
         }
 
 
+        // =================================================
+        // 写入 Firestore
+        // =================================================
+
         if (
             Object.keys(
                 updates
@@ -895,12 +938,6 @@ if (
         );
 
     }
-
-
-
-    // =====================================================
-    // ADD / REMOVE ADMIN
-    // =====================================================
 
     if (
         requestBody.action ===
